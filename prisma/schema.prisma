@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Shipment model represents a shipping order
+model Shipment {
+  id        Int      @id @default(autoincrement())
+
+  // Unique tracking number (format: TR + 9 random digits)
+  trackingNumber String @unique
+
+  // Sender information
+  senderName       String
+  senderStreet     String
+  senderCity       String
+  senderPostalCode String
+  senderCountry    String
+  senderPhone      String
+
+  // Receiver information
+  receiverName       String
+  receiverStreet     String
+  receiverCity       String
+  receiverPostalCode String
+  receiverCountry    String
+  receiverPhone      String
+
+  // Package information
+  weight     Float  // in kg - important for testing boundary conditions!
+  length     Float  // in cm
+  width      Float  // in cm
+  height     Float  // in cm
+
+  // Pickup method - great for testing radio button functionality
+  pickupMethod String @default("home") // 'home' or 'postal_office'
+
+  // Service type: Standard, Express, or Overnight
+  // Great for testing dropdown/select validation
+  serviceType String
+
+  // Special services - great for testing checkbox functionality
+  signatureRequired Boolean @default(false)
+  containsLiquid    Boolean @default(false)
+
+  // Price calculation based on weight + service type
+  // Excellent for testing business logic and calculations
+  price Float
+
+  // Draft status - useful for testing save functionality
+  isDraft Boolean @default(false)
+
+  // Current status of the shipment
+  // Excellent for state transition testing
+  status String @default("Pending")
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Estimated delivery date - calculated based on service type
+  estimatedDelivery DateTime?
+
+  // Actual delivery date - set when status becomes "Delivered"
+  actualDelivery    DateTime?
+
+  // Tracking events (timeline of shipment progress)
+  trackingEvents TrackingEvent[]
+
+  @@index([trackingNumber])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// TrackingEvent model represents events in the shipment timeline
+model TrackingEvent {
+  id          Int      @id @default(autoincrement())
+  shipmentId  Int
+
+  // Event status (e.g., "Order Placed", "Picked Up", "In Transit", etc.)
+  status      String
+
+  // Location where event occurred
+  location    String
+
+  // Description of the event
+  description String
+
+  // Timestamp when event occurred
+  timestamp   DateTime @default(now())
+
+  // Relation to shipment
+  shipment    Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  @@index([shipmentId])
+  @@index([timestamp])
+}

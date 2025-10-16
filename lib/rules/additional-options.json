@@ -1,0 +1,36 @@
+{
+  "cardName": "additionalOptions",
+  "title": "Additional Options",
+  "enabled": false,
+  "fields": {
+    "signatureRequired": {
+      "type": "checkbox",
+      "label": "Signature Required",
+      "checked": false,
+      "disabled": false
+    },
+    "containsLiquid": {
+      "type": "checkbox",
+      "label": "Contains Liquid",
+      "checked": false,
+      "disabled": false
+    },
+    "pickupMethod": {
+      "type": "radio",
+      "label": "Pickup Method",
+      "options": [
+        {
+          "value": "home",
+          "label": "Pickup from Home"
+        },
+        {
+          "value": "postal_office",
+          "label": "Drop off at Postal Office"
+        }
+      ],
+      "defaultValue": "home",
+      "allowedValues": ["home", "postal_office"],
+      "disabledValues": []
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "countries": [
+    {
+      "code": "SA",
+      "name": "Saudi Arabia",
+      "isGulf": true
+    },
+    {
+      "code": "AE",
+      "name": "United Arab Emirates",
+      "isGulf": true
+    },
+    {
+      "code": "KW",
+      "name": "Kuwait",
+      "isGulf": true
+    },
+    {
+      "code": "BH",
+      "name": "Bahrain",
+      "isGulf": true
+    },
+    {
+      "code": "QA",
+      "name": "Qatar",
+      "isGulf": true
+    },
+    {
+      "code": "OM",
+      "name": "Oman",
+      "isGulf": true
+    },
+    {
+      "code": "EG",
+      "name": "Egypt",
+      "isGulf": false
+    },
+    {
+      "code": "JO",
+      "name": "Jordan",
+      "isGulf": false
+    },
+    {
+      "code": "LB",
+      "name": "Lebanon",
+      "isGulf": false
+    },
+    {
+      "code": "IQ",
+      "name": "Iraq",
+      "isGulf": false
+    }
+  ]
+}

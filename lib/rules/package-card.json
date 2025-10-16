@@ -1,0 +1,81 @@
+{
+  "shipmentTypes": {
+    "Domestic": {
+      "maxWeight": 50,
+      "maxDimension": 200
+    },
+    "IntraGulf": {
+      "maxWeight": 30,
+      "maxDimension": 200
+    },
+    "International": {
+      "maxWeight": 25,
+      "maxDimension": 200
+    }
+  },
+  "cardName": "package",
+  "title": "Package Information",
+  "enabled": false,
+  "fields": {
+    "weight": {
+      "type": "number",
+      "label": "Weight (kg)",
+      "required": true,
+      "validation": {
+        "required": true,
+        "min": 0.1,
+        "errorMessage": "Weight must be greater than 0"
+      },
+      "placeholder": "Enter weight in kg"
+    },
+    "length": {
+      "type": "number",
+      "label": "Length (cm)",
+      "required": true,
+      "validation": {
+        "required": true,
+        "min": 1,
+        "max": 200,
+        "errorMessage": "Length must be between 1-200 cm"
+      },
+      "placeholder": "Enter length"
+    },
+    "width": {
+      "type": "number",
+      "label": "Width (cm)",
+      "required": true,
+      "validation": {
+        "required": true,
+        "min": 1,
+        "max": 200,
+        "errorMessage": "Width must be between 1-200 cm"
+      },
+      "placeholder": "Enter width"
+    },
+    "height": {
+      "type": "number",
+      "label": "Height (cm)",
+      "required": true,
+      "validation": {
+        "required": true,
+        "min": 1,
+        "max": 200,
+        "errorMessage": "Height must be between 1-200 cm"
+      },
+      "placeholder": "Enter height"
+    },
+    "itemDescription": {
+      "type": "text",
+      "label": "Item Description",
+      "required": false,
+      "visible": false,
+      "validation": {
+        "required": false,
+        "minLength": 5,
+        "maxLength": 200,
+        "errorMessage": "Item description is required when shipping from non-Gulf to Gulf countries"
+      },
+      "placeholder": "Describe the item contents"
+    }
+  }
+}

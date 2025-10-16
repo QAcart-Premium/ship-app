@@ -10,12 +10,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// User model represents registered users
+model User {
+  id        Int      @id @default(autoincrement())
+
+  // Authentication
+  email     String   @unique
+  password  String   // hashed with bcrypt
+
+  // Personal Information (used as sender details)
+  fullName   String
+  phone      String
+  country    String
+  city       String
+  street     String
+  postalCode String
+
+  // Payment Information (encrypted)
+  cardNumber String   // encrypted full card number
+  cardExpiry String   // encrypted expiry date
+  cardCvv    String   // encrypted CVV
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  shipments Shipment[]
+
+  @@index([email])
+}
+
 // Shipment model represents a shipping order
 model Shipment {
   id        Int      @id @default(autoincrement())
 
   // Unique tracking number (format: TR + 9 random digits)
   trackingNumber String @unique
+
+  // User relationship
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Sender information
   senderName       String
@@ -77,6 +112,7 @@ model Shipment {
   @@index([trackingNumber])
   @@index([status])
   @@index([createdAt])
+  @@index([userId])
 }
 
 // TrackingEvent model represents events in the shipment timeline

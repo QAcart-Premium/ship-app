@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import type { CardRules, ServiceOption, ShipmentType } from '@/lib/rules/types'
 
 export function useShipmentForm() {
+  const router = useRouter()
+
   // State
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+
+  // Payment modal state
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
+  const [maskedCardNumber, setMaskedCardNumber] = useState('**** **** **** ****')
 
   // Card rules
   const [senderRules, setSenderRules] = useState<CardRules | null>(null)
@@ -51,6 +58,46 @@ export function useShipmentForm() {
   })
 
   // API Loaders
+  const loadUser = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+
+      if (!response.ok) {
+        // User not authenticated, redirect to login
+        window.location.href = '/login'
+        return
+      }
+
+      const data = await response.json()
+      const user = data.user
+
+      // Pre-fill sender data from user info
+      setFormData((prev) => ({
+        ...prev,
+        senderName: user.fullName,
+        senderPhone: user.phone,
+        senderCountry: user.country,
+        senderCity: user.city,
+        senderStreet: user.street,
+        senderPostalCode: user.postalCode,
+      }))
+
+      // Get masked card number for payment modal
+      const cardResponse = await fetch('/api/user/payment-info')
+      if (cardResponse.ok) {
+        const cardData = await cardResponse.json()
+        setMaskedCardNumber(cardData.maskedCardNumber)
+      }
+
+      // Mark sender as completed since user data is pre-filled
+      setSenderCompleted(true)
+    } catch (error) {
+      console.error('Error loading user:', error)
+      // Redirect to login on error
+      window.location.href = '/login'
+    }
+  }
+
   const loadSenderRules = async () => {
     try {
       const response = await fetch('/api/rules/sender', {
@@ -336,8 +383,18 @@ export function useShipmentForm() {
 
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
     e.preventDefault()
-    if (!isDraft && !validateForm()) return
 
+    if (isDraft) {
+      // Save as draft directly
+      await createShipment(true)
+    } else {
+      // Finalize: Validate and show payment modal
+      if (!validateForm()) return
+      setShowPaymentModal(true)
+    }
+  }
+
+  const createShipment = async (isDraft: boolean = false) => {
     setLoading(true)
     try {
       const response = await fetch('/api/shipments', {
@@ -359,20 +416,43 @@ export function useShipmentForm() {
       }
 
       const shipment = await response.json()
-      setSuccessMessage(
-        `${isDraft ? 'Draft saved' : 'Shipment finalized'} successfully! Tracking number: ${shipment.trackingNumber}`
-      )
 
-      resetForm()
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-      setTimeout(() => setSuccessMessage(null), 10000)
+      if (isDraft) {
+        // For draft, redirect to overview
+        router.push('/overview')
+      } else {
+        // For finalized, redirect to shipment detail page
+        router.push(`/shipment/${shipment.id}`)
+      }
     } catch (error) {
       console.error('Error creating shipment:', error)
-      setErrors({
-        general: error instanceof Error ? error.message : 'Failed to create shipment',
-      })
+      throw error
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePaymentConfirm = async () => {
+    try {
+      // Process payment
+      const paymentResponse = await fetch('/api/payment/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!paymentResponse.ok) {
+        const error = await paymentResponse.json()
+        throw new Error(error.error || 'Payment failed')
+      }
+
+      // Payment successful, create shipment
+      await createShipment(false)
+
+      // Close modal
+      setShowPaymentModal(false)
+    } catch (error) {
+      setShowPaymentModal(false)
+      throw error
     }
   }
 
@@ -413,8 +493,9 @@ export function useShipmentForm() {
     setServiceRules(null)
   }
 
-  // Effects - Load initial rules
+  // Effects - Load user and initial rules
   useEffect(() => {
+    loadUser()
     loadSenderRules()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -561,10 +642,15 @@ export function useShipmentForm() {
     selectedService,
     calculatedPrice,
     rateBreakdown,
+    // Payment modal
+    showPaymentModal,
+    setShowPaymentModal,
+    maskedCardNumber,
     // Handlers
     handleFieldChange,
     handleFieldBlur,
     handleServiceSelect,
     handleSubmit,
+    handlePaymentConfirm,
   }
 }

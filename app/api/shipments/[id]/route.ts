@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import type { UpdateStatusData } from '@/lib/types'
+import { requireAuth } from '@/lib/auth'
 
 /**
  * GET /api/shipments/[id]
@@ -17,14 +18,21 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Require authentication
+    const { user, response } = await requireAuth(request)
+    if (response) return response
+
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
       return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
     }
 
-    const shipment = await prisma.shipment.findUnique({
-      where: { id },
+    const shipment = await prisma.shipment.findFirst({
+      where: {
+        id,
+        userId: user!.id, // Ensure user can only access their own shipments
+      },
       include: {
         trackingEvents: {
           orderBy: { timestamp: 'asc' },
@@ -61,6 +69,10 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Require authentication
+    const { user, response } = await requireAuth(request)
+    if (response) return response
+
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
@@ -69,9 +81,12 @@ export async function PUT(
 
     const body: UpdateStatusData = await request.json()
 
-    // Check if shipment exists
-    const existingShipment = await prisma.shipment.findUnique({
-      where: { id },
+    // Check if shipment exists and belongs to user
+    const existingShipment = await prisma.shipment.findFirst({
+      where: {
+        id,
+        userId: user!.id,
+      },
     })
 
     if (!existingShipment) {
@@ -140,15 +155,22 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    // Require authentication
+    const { user, response } = await requireAuth(request)
+    if (response) return response
+
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
       return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
     }
 
-    // Check if shipment exists
-    const existingShipment = await prisma.shipment.findUnique({
-      where: { id },
+    // Check if shipment exists and belongs to user
+    const existingShipment = await prisma.shipment.findFirst({
+      where: {
+        id,
+        userId: user!.id,
+      },
     })
 
     if (!existingShipment) {

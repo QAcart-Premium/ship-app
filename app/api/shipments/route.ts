@@ -7,6 +7,7 @@ import {
 } from '@/lib/calculations'
 import { validateShipmentForm } from '@/lib/validations'
 import type { CreateShipmentData } from '@/lib/types'
+import { requireAuth } from '@/lib/auth'
 
 /**
  * GET /api/shipments
@@ -29,6 +30,10 @@ import type { CreateShipmentData } from '@/lib/types'
  */
 export async function GET(request: NextRequest) {
   try {
+    // Require authentication
+    const { user, response } = await requireAuth(request)
+    if (response) return response
+
     const searchParams = request.nextUrl.searchParams
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'All'
@@ -38,7 +43,9 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10')
 
     // Build where clause for filtering
-    const where: any = {}
+    const where: any = {
+      userId: user!.id, // Only show user's own shipments
+    }
 
     // Search filter - searches across multiple fields
     if (search) {
@@ -109,6 +116,10 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const { user, response } = await requireAuth(request)
+    if (response) return response
+
     const body: any = await request.json()
     const isDraft = body.isDraft || false
 
@@ -145,6 +156,7 @@ export async function POST(request: NextRequest) {
     // Create shipment in database
     const shipment = await prisma.shipment.create({
       data: {
+        userId: user!.id,
         trackingNumber,
         senderName: body.senderName || '',
         senderStreet: body.senderStreet || '',

@@ -6,6 +6,7 @@ import PackageCard from './cards/PackageCard'
 import ServiceSelectionCard from './cards/ServiceSelectionCard'
 import AdditionalOptionsCard from './cards/AdditionalOptionsCard'
 import RateCard from './cards/RateCard'
+import PaymentConfirmationModal from './PaymentConfirmationModal'
 import { useShipmentForm } from '@/hooks/useShipmentForm'
 
 export default function ShipmentForm() {
@@ -26,10 +27,14 @@ export default function ShipmentForm() {
     selectedService,
     calculatedPrice,
     rateBreakdown,
+    showPaymentModal,
+    setShowPaymentModal,
+    maskedCardNumber,
     handleFieldChange,
     handleFieldBlur,
     handleServiceSelect,
     handleSubmit,
+    handlePaymentConfirm,
   } = useShipmentForm()
 
   return (
@@ -64,7 +69,7 @@ export default function ShipmentForm() {
             errors={errors}
             onChange={handleFieldChange}
             onBlur={handleFieldBlur}
-            disabled={false}
+            disabled={true}
           />
 
           <ReceiverCard
@@ -116,22 +121,32 @@ export default function ShipmentForm() {
         <button
           type="button"
           onClick={(e) => handleSubmit(e, true)}
-          disabled={loading}
+          disabled={loading || !packageCompleted}
           data-testid="save-draft-button"
-          className="px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-400"
         >
           {loading ? 'Saving...' : 'Save as Draft'}
         </button>
         <button
           type="submit"
           onClick={(e) => handleSubmit(e, false)}
-          disabled={loading || !selectedService}
+          disabled={loading || !selectedService || !calculatedPrice}
           data-testid="finalize-button"
           className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {loading ? 'Finalizing...' : 'Finalize Shipment'}
         </button>
       </div>
+
+      {/* Payment Confirmation Modal */}
+      <PaymentConfirmationModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        onConfirm={handlePaymentConfirm}
+        rateBreakdown={rateBreakdown}
+        totalPrice={calculatedPrice}
+        maskedCardNumber={maskedCardNumber}
+      />
     </form>
   )
 }

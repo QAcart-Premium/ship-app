@@ -27,6 +27,8 @@ export async function POST(request: NextRequest) {
       pickupMethod,
       signatureRequired,
       containsLiquid,
+      insurance,
+      packaging,
     } = body
 
     // Validate required parameters
@@ -80,17 +82,26 @@ export async function POST(request: NextRequest) {
     // Calculate liquid handling fee
     const liquidFee = containsLiquid ? pricingRules.additionalFees.liquid : 0
 
+    // Calculate insurance fee
+    const insuranceFee = insurance ? pricingRules.additionalFees.insurance : 0
+
+    // Calculate packaging fee
+    const packagingFee = packaging ? pricingRules.additionalFees.packaging : 0
+
+    // Calculate base cost (service + weight + pickup)
+    const baseCost = serviceBase + weightCharge + pickupFee
+
     // Calculate total price
-    const totalPrice = serviceBase + weightCharge + pickupFee + signatureFee + liquidFee
+    const totalPrice = baseCost + signatureFee + liquidFee + insuranceFee + packagingFee
 
     return NextResponse.json({
       totalPrice: parseFloat(totalPrice.toFixed(2)),
       breakdown: {
-        serviceBase: parseFloat(serviceBase.toFixed(2)),
-        weightCharge: parseFloat(weightCharge.toFixed(2)),
-        pickupFee: parseFloat(pickupFee.toFixed(2)),
-        signatureFee: parseFloat(signatureFee.toFixed(2)),
-        liquidFee: parseFloat(liquidFee.toFixed(2)),
+        baseCost: parseFloat(baseCost.toFixed(2)),
+        signatureCost: parseFloat(signatureFee.toFixed(2)),
+        insuranceCost: parseFloat(insuranceFee.toFixed(2)),
+        packagingCost: parseFloat(packagingFee.toFixed(2)),
+        liquidCost: parseFloat(liquidFee.toFixed(2)),
       },
       context: {
         serviceName: selectedService.name,

@@ -7,7 +7,6 @@ import PackageCard from './cards/PackageCard'
 import ServiceSelectionCard from './cards/ServiceSelectionCard'
 import AdditionalOptionsCard from './cards/AdditionalOptionsCard'
 import RateCard from './cards/RateCard'
-import PaymentConfirmationModal from './PaymentConfirmationModal'
 import { useShipmentForm } from '@/hooks/useShipmentForm'
 
 interface ShipmentFormProps {
@@ -34,14 +33,10 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
     selectedService,
     calculatedPrice,
     rateBreakdown,
-    showPaymentModal,
-    setShowPaymentModal,
-    maskedCardNumber,
     handleFieldChange,
     handleFieldBlur,
     handleServiceSelect,
     handleSubmit,
-    handlePaymentConfirm,
   } = useShipmentForm(editId, repeatId)
 
   return (
@@ -156,16 +151,6 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
           {loading ? 'Finalizing...' : 'Finalize Shipment'}
         </button>
       </div>
-
-      {/* Payment Confirmation Modal */}
-      <PaymentConfirmationModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        onConfirm={handlePaymentConfirm}
-        rateBreakdown={rateBreakdown}
-        totalPrice={calculatedPrice}
-        maskedCardNumber={maskedCardNumber}
-      />
     </form>
   )
 }

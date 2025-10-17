@@ -14,10 +14,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     editId ? parseInt(editId) : repeatId ? parseInt(repeatId) : null
   )
 
-  // Payment modal state
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [maskedCardNumber, setMaskedCardNumber] = useState('**** **** **** ****')
-
   // Card rules
   const [senderRules, setSenderRules] = useState<CardRules | null>(null)
   const [receiverRules, setReceiverRules] = useState<CardRules | null>(null)
@@ -58,6 +54,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     serviceType: '',
     signatureRequired: false,
     containsLiquid: false,
+    insurance: false,
+    packaging: false,
     pickupMethod: 'home',
   })
 
@@ -89,13 +87,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
 
         // Mark sender as completed since user data is pre-filled
         setSenderCompleted(true)
-      }
-
-      // Get masked card number for payment modal
-      const cardResponse = await fetch('/api/user/payment-info')
-      if (cardResponse.ok) {
-        const cardData = await cardResponse.json()
-        setMaskedCardNumber(cardData.maskedCardNumber)
       }
     } catch (error) {
       console.error('Error loading user:', error)
@@ -144,6 +135,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
         serviceType: shipment.serviceType || '',
         signatureRequired: shipment.signatureRequired || false,
         containsLiquid: shipment.containsLiquid || false,
+        insurance: shipment.insurance || false,
+        packaging: shipment.packaging || false,
         pickupMethod: shipment.pickupMethod || 'home',
       })
 
@@ -268,6 +261,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
           pickupMethod: formData.pickupMethod,
           signatureRequired: formData.signatureRequired,
           containsLiquid: formData.containsLiquid,
+          insurance: formData.insurance,
+          packaging: formData.packaging,
         }),
       })
 
@@ -444,9 +439,9 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       // Save as draft directly
       await createShipment(true)
     } else {
-      // Finalize: Validate and show payment modal
+      // Finalize: Validate and create shipment
       if (!validateForm()) return
-      setShowPaymentModal(true)
+      await createShipment(false)
     }
   }
 
@@ -474,9 +469,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
           signatureCost: rateBreakdown?.signatureCost || 0,
           packagingCost: rateBreakdown?.packagingCost || 0,
           totalCost: calculatedPrice || 0,
-          // Additional options (derive from costs)
-          insurance: (rateBreakdown?.insuranceCost || 0) > 0,
-          packaging: (rateBreakdown?.packagingCost || 0) > 0,
         }),
       })
 
@@ -495,11 +487,11 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const shipment = await response.json()
 
       if (isDraft) {
-        // For draft, redirect to shipments with success message
-        router.push('/shipments?success=true')
+        // For draft, redirect to shipments
+        router.push('/shipments')
       } else {
-        // For finalized, redirect to shipments with success message
-        router.push('/shipments?success=true')
+        // For finalized, redirect to shipments
+        router.push('/shipments')
       }
     } catch (error) {
       console.error(`Error ${isEditMode ? 'updating' : 'creating'} shipment:`, error)
@@ -509,43 +501,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     }
   }
 
-  const handlePaymentConfirm = async () => {
-    try {
-      // Process payment
-      const paymentResponse = await fetch('/api/payment/process', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-      })
-
-      if (!paymentResponse.ok) {
-        const error = await paymentResponse.json()
-        setShowPaymentModal(false)
-        setErrors({ payment: error.error || 'Payment failed' })
-        return
-      }
-
-      // Payment successful, create shipment
-      await createShipment(false)
-
-      // Close modal
-      setShowPaymentModal(false)
-    } catch (error) {
-      setShowPaymentModal(false)
-
-      // Parse and display validation errors
-      if (error instanceof Error) {
-        const errorMessage = error.message
-
-        // Try to extract validation details from error message
-        if (errorMessage.includes('Validation failed')) {
-          // The error might contain details, display it as a general error
-          setErrors({ general: errorMessage })
-        } else {
-          setErrors({ general: errorMessage })
-        }
-      }
-    }
-  }
 
   const resetForm = () => {
     setFormData({
@@ -569,6 +524,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       serviceType: '',
       signatureRequired: false,
       containsLiquid: false,
+      insurance: false,
+      packaging: false,
       pickupMethod: 'home',
     })
     setSenderCompleted(false)
@@ -678,6 +635,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     formData.pickupMethod,
     formData.signatureRequired,
     formData.containsLiquid,
+    formData.insurance,
+    formData.packaging,
   ])
 
   // Reload sender rules when country changes
@@ -753,15 +712,10 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     selectedService,
     calculatedPrice,
     rateBreakdown,
-    // Payment modal
-    showPaymentModal,
-    setShowPaymentModal,
-    maskedCardNumber,
     // Handlers
     handleFieldChange,
     handleFieldBlur,
     handleServiceSelect,
     handleSubmit,
-    handlePaymentConfirm,
   }
 }

@@ -47,6 +47,8 @@
   },
   "additionalFees": {
     "signature": 5.00,
-    "liquid": 10.00
+    "liquid": 10.00,
+    "insurance": 15.00,
+    "packaging": 8.00
   }
 }

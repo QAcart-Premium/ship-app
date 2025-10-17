@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Copy, Trash2, Edit } from 'lucide-react'
-import PaymentConfirmationModal from '@/components/PaymentConfirmationModal'
 import DeleteModal from '@/components/shipments/DeleteModal'
 
 interface Shipment {
@@ -31,6 +30,8 @@ interface Shipment {
   height: number
   contentDescription: string
   serviceType: string
+  pickupMethod: string
+  containsLiquid: boolean
   insurance: boolean
   signatureRequired: boolean
   packaging: boolean
@@ -51,7 +52,6 @@ export default function ShipmentDetailPage() {
   const [shipment, setShipment] = useState<Shipment | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [finalizing, setFinalizing] = useState(false)
 
@@ -85,32 +85,25 @@ export default function ShipmentDetailPage() {
     }
   }
 
-  const handleFinalize = () => {
-    setShowPaymentModal(true)
-  }
-
-  const handlePaymentConfirm = async () => {
+  const handleFinalize = async () => {
     if (!shipment) return
 
     setFinalizing(true)
     try {
-      const response = await fetch('/api/payment/process', {
+      const response = await fetch(`/api/shipments/${shipment.id}/finalize`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shipmentId: shipment.id }),
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Payment failed')
+        throw new Error(data.error || 'Failed to finalize shipment')
       }
 
-      // Reload shipment data to show updated status
-      await loadShipment()
-      setShowPaymentModal(false)
+      // Redirect to shipments list
       router.push('/shipments')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to process payment')
+      setError(err instanceof Error ? err.message : 'Failed to finalize shipment')
     } finally {
       setFinalizing(false)
     }
@@ -128,7 +121,7 @@ export default function ShipmentDetailPage() {
         throw new Error('Failed to delete shipment')
       }
 
-      router.push('/shipments?success=true')
+      router.push('/shipments')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete shipment')
       setShowDeleteModal(false)
@@ -213,9 +206,10 @@ export default function ShipmentDetailPage() {
                 </Link>
                 <button
                   onClick={handleFinalize}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  disabled={finalizing}
+                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  Finalize & Pay
+                  {finalizing ? 'Finalizing...' : 'Finalize Shipment'}
                 </button>
                 <button
                   onClick={() => setShowDeleteModal(true)}
@@ -328,6 +322,12 @@ export default function ShipmentDetailPage() {
               <div className="font-medium text-gray-900">{shipment.serviceType}</div>
             </div>
             <div>
+              <div className="text-sm text-gray-500">Pickup Method</div>
+              <div className="font-medium text-gray-900">
+                {shipment.pickupMethod === 'home' ? 'Home Pickup' : 'Postal Office Drop-off'}
+              </div>
+            </div>
+            <div>
               <div className="text-sm text-gray-500">Additional Options</div>
               <div className="space-y-1">
                 {shipment.insurance && (
@@ -354,7 +354,15 @@ export default function ShipmentDetailPage() {
                     Professional Packaging
                   </div>
                 )}
-                {!shipment.insurance && !shipment.signatureRequired && !shipment.packaging && (
+                {shipment.containsLiquid && (
+                  <div className="flex items-center text-sm">
+                    <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    Contains Liquid
+                  </div>
+                )}
+                {!shipment.insurance && !shipment.signatureRequired && !shipment.packaging && !shipment.containsLiquid && (
                   <div className="text-sm text-gray-500">No additional options selected</div>
                 )}
               </div>
@@ -397,26 +405,6 @@ export default function ShipmentDetailPage() {
           </div>
         </div>
       </div>
-
-      {/* Payment Confirmation Modal */}
-      {showPaymentModal && (
-        <PaymentConfirmationModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          onConfirm={handlePaymentConfirm}
-          shipmentData={{
-            baseCost: shipment.baseCost || 0,
-            insurance: shipment.insurance,
-            insuranceCost: shipment.insuranceCost || 0,
-            signature: shipment.signatureRequired,
-            signatureCost: shipment.signatureCost || 0,
-            packaging: shipment.packaging,
-            packagingCost: shipment.packagingCost || 0,
-            totalCost: shipment.totalCost || 0,
-          }}
-          loading={finalizing}
-        />
-      )}
 
       {/* Delete Confirmation Modal */}
       <DeleteModal

@@ -16,6 +16,8 @@ export default function AdditionalOptionsCard({
   // Show disabled state when rules are not loaded yet
   const signatureField = rules?.fields?.signatureRequired
   const liquidField = rules?.fields?.containsLiquid
+  const insuranceField = rules?.fields?.insurance
+  const packagingField = rules?.fields?.packaging
   const pickupField = rules?.fields?.pickupMethod
 
   return (
@@ -65,6 +67,48 @@ export default function AdditionalOptionsCard({
               }`}
             >
               {liquidField.label}
+            </label>
+          </div>
+        )}
+        {insuranceField && (
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="insurance"
+              checked={formData.insurance}
+              onChange={(e) => onChange('insurance', e.target.checked)}
+              disabled={disabled || !rules || insuranceField.disabled}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              data-testid="insurance-checkbox"
+            />
+            <label
+              htmlFor="insurance"
+              className={`ml-2 text-sm ${
+                insuranceField.disabled ? 'text-gray-500' : 'text-gray-700'
+              }`}
+            >
+              {insuranceField.label}
+            </label>
+          </div>
+        )}
+        {packagingField && (
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="packaging"
+              checked={formData.packaging}
+              onChange={(e) => onChange('packaging', e.target.checked)}
+              disabled={disabled || !rules || packagingField.disabled}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              data-testid="packaging-checkbox"
+            />
+            <label
+              htmlFor="packaging"
+              className={`ml-2 text-sm ${
+                packagingField.disabled ? 'text-gray-500' : 'text-gray-700'
+              }`}
+            >
+              {packagingField.label}
             </label>
           </div>
         )}

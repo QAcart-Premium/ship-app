@@ -33,6 +33,7 @@ export default function ShipmentsPage() {
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [shipmentToDelete, setShipmentToDelete] = useState<number | null>(null)
+  const [finalizing, setFinalizing] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   // Filters
@@ -122,6 +123,29 @@ export default function ShipmentsPage() {
     }
   }
 
+  const handleFinalizeClick = async (shipmentId: number) => {
+    setFinalizing(true)
+    setOpenMenuId(null)
+    try {
+      const response = await fetch(`/api/shipments/${shipmentId}/finalize`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to finalize shipment')
+      }
+
+      // Reload shipments to show updated status
+      await loadShipments()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to finalize shipment')
+    } finally {
+      setFinalizing(false)
+    }
+  }
+
   const handleMenuClick = (shipmentId: number, event: React.MouseEvent<HTMLButtonElement>) => {
     const rect = event.currentTarget.getBoundingClientRect()
     setMenuPosition({
@@ -207,6 +231,7 @@ export default function ShipmentsPage() {
             position={menuPosition}
             onClose={() => setOpenMenuId(null)}
             onDelete={handleDeleteClick}
+            onFinalize={handleFinalizeClick}
           />
         </div>
       )}

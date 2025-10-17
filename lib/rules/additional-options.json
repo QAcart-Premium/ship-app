@@ -15,6 +15,18 @@
       "checked": false,
       "disabled": false
     },
+    "insurance": {
+      "type": "checkbox",
+      "label": "Insurance ($15.00)",
+      "checked": false,
+      "disabled": false
+    },
+    "packaging": {
+      "type": "checkbox",
+      "label": "Professional Packaging ($8.00)",
+      "checked": false,
+      "disabled": false
+    },
     "pickupMethod": {
       "type": "radio",
       "label": "Pickup Method",

@@ -7,6 +7,7 @@ interface KebabMenuProps {
   position: { top: number; left: number }
   onClose: () => void
   onDelete: (id: number) => void
+  onFinalize?: (id: number) => void
 }
 
 export default function KebabMenu({
@@ -15,6 +16,7 @@ export default function KebabMenu({
   position,
   onClose,
   onDelete,
+  onFinalize,
 }: KebabMenuProps) {
   return (
     <div
@@ -43,14 +45,13 @@ export default function KebabMenu({
               <Edit className="w-4 h-4" />
               Edit
             </Link>
-            <Link
-              href={`/shipments/${shipmentId}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
-              onClick={onClose}
+            <button
+              onClick={() => onFinalize?.(shipmentId)}
+              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
             >
               <FileCheck className="w-4 h-4" />
               Finalize
-            </Link>
+            </button>
             <button
               onClick={() => onDelete(shipmentId)}
               className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"

@@ -26,11 +26,6 @@ model User {
   street     String
   postalCode String
 
-  // Payment Information (encrypted)
-  cardNumber String   // encrypted full card number
-  cardExpiry String   // encrypted expiry date
-  cardCvv    String   // encrypted CVV
-
   // Timestamps
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,35 +116,8 @@ model Shipment {
   // Actual delivery date - set when status becomes "Delivered"
   actualDelivery    DateTime?
 
-  // Tracking events (timeline of shipment progress)
-  trackingEvents TrackingEvent[]
-
   @@index([trackingNumber])
   @@index([status])
   @@index([createdAt])
   @@index([userId])
-}
-
-// TrackingEvent model represents events in the shipment timeline
-model TrackingEvent {
-  id          Int      @id @default(autoincrement())
-  shipmentId  Int
-
-  // Event status (e.g., "Order Placed", "Picked Up", "In Transit", etc.)
-  status      String
-
-  // Location where event occurred
-  location    String
-
-  // Description of the event
-  description String
-
-  // Timestamp when event occurred
-  timestamp   DateTime @default(now())
-
-  // Relation to shipment
-  shipment    Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  @@index([shipmentId])
-  @@index([timestamp])
 }

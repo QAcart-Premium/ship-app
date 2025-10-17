@@ -1,12 +1,6 @@
 'use client'
 
-interface RateBreakdown {
-  baseCost: number
-  signatureCost: number
-  insuranceCost: number
-  packagingCost: number
-  liquidCost: number
-}
+import { RateBreakdown } from '@/lib/types'
 
 interface RateCardProps {
   calculatedPrice: number | null

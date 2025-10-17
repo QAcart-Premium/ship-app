@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import serviceCardRules from '@/lib/rules/service-card.json'
-import type { ShipmentType } from '@/lib/rules/types'
+import type { ShipmentType } from '@/lib/types'
 
 /**
  * POST /api/rules/service

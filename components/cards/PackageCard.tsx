@@ -1,7 +1,7 @@
 'use client'
 
 import DynamicCard from '../DynamicCard'
-import type { ShipmentType } from '@/lib/rules/types'
+import type { ShipmentType } from '@/lib/types'
 
 interface PackageCardProps {
   rules: any

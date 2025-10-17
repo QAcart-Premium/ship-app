@@ -1,19 +1,6 @@
 import Link from 'next/link'
 import { MoreVertical } from 'lucide-react'
-
-interface Shipment {
-  id: number
-  trackingNumber: string
-  status: string
-  senderName: string
-  receiverName: string
-  receiverCountry: string
-  receiverCity: string
-  shipmentType: string
-  serviceType: string
-  totalCost: number
-  createdAt: string
-}
+import type { Shipment } from '@/lib/types'
 
 interface ShipmentsTableProps {
   shipments: Shipment[]
@@ -111,16 +98,16 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
                 {shipment.status === 'draft' ? '-' : shipment.trackingNumber}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {shipment.senderName}
+                {shipment.from.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {shipment.receiverName}
+                {shipment.to.name}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {shipment.receiverCity}, {shipment.receiverCountry}
+                {shipment.to.city}, {shipment.to.country}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {shipment.shipmentType}
+                {shipment.service.shipmentType}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 {getStatusBadge(shipment.status)}

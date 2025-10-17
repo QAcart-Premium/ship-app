@@ -1,7 +1,7 @@
 'use client'
 
 import { User, Users, Package, CheckCircle } from 'lucide-react'
-import type { CardRules, FieldRule, SelectOption } from '@/lib/rules/types'
+import type { CardRules, FieldRule } from '@/lib/types'
 
 interface DynamicCardProps {
   rules: CardRules | null
@@ -178,9 +178,6 @@ export default function DynamicCard({
   // Filter out fields that are not visible (visible is undefined or true)
   const fieldEntries = Object.entries(rules.fields).filter(
     ([_, field]) => field.visible !== false
-  )
-  const hasFullWidthFields = fieldEntries.some(
-    ([name]) => name.includes('Street') || name.includes('Country')
   )
 
   // Determine icon based on card title

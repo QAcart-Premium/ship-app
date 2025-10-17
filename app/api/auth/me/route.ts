@@ -13,28 +13,10 @@ export async function GET(request: NextRequest) {
       return response // Unauthorized
     }
 
-    // Return user data without sensitive info
-    return NextResponse.json(
-      {
-        user: {
-          id: user!.id,
-          email: user!.email,
-          fullName: user!.fullName,
-          phone: user!.phone,
-          country: user!.country,
-          city: user!.city,
-          street: user!.street,
-          postalCode: user!.postalCode,
-          createdAt: user!.createdAt,
-        },
-      },
-      { status: 200 }
-    )
+    // Return user data (requireAuth already returns User type without password)
+    return NextResponse.json({ user }, { status: 200 })
   } catch (error) {
     console.error('Get current user error:', error)
-    return NextResponse.json(
-      { error: 'Failed to get user information' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to get user information' }, { status: 500 })
   }
 }

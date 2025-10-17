@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
 import { verifyPassword, createAuthCookie } from '@/lib/auth'
+import { userRepository } from '@/repositories'
 
 /**
  * POST /api/auth/login
@@ -13,52 +13,33 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
-    // Find user by email
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    })
+    // Find user by email (with password for verification)
+    const user = await userRepository.findByEmailWithPassword(email.toLowerCase())
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
     // Verify password
     const isPasswordValid = await verifyPassword(password, user.password)
 
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { error: 'Invalid email or password' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
     // Create auth cookie with JWT
     const cookie = createAuthCookie(user.id, user.email)
 
-    // Return success with user data (without sensitive info)
+    // Return success with user data (without password)
+    const { password: _, ...userWithoutPassword } = user
+
     const response = NextResponse.json(
       {
         message: 'Login successful',
-        user: {
-          id: user.id,
-          email: user.email,
-          fullName: user.fullName,
-          phone: user.phone,
-          country: user.country,
-          city: user.city,
-          street: user.street,
-          postalCode: user.postalCode,
-          createdAt: user.createdAt,
-        },
+        user: userWithoutPassword,
       },
       { status: 200 }
     )

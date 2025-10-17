@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import type { CardRules, ServiceOption, ShipmentType } from '@/lib/rules/types'
+import type { CardRules, ServiceOption, ShipmentType } from '@/lib/types'
 
 export function useShipmentForm(editId?: string | null, repeatId?: string | null) {
   const router = useRouter()
@@ -8,9 +8,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
   // State
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
-  const [isEditMode, setIsEditMode] = useState(!!editId)
-  const [shipmentId, setShipmentId] = useState<number | null>(
+  const [isEditMode] = useState(!!editId)
+  const [shipmentId] = useState<number | null>(
     editId ? parseInt(editId) : repeatId ? parseInt(repeatId) : null
   )
 
@@ -448,28 +447,69 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
   const createShipment = async (isDraft: boolean = false) => {
     setLoading(true)
     try {
-      const url = isEditMode && shipmentId ? `/api/shipments/${shipmentId}` : '/api/shipments'
-      const method = isEditMode && shipmentId ? 'PUT' : 'POST'
-
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          shipmentType,
+      // Transform flat formData to new nested structure
+      const requestBody = {
+        from: {
+          name: formData.senderName,
+          phone: formData.senderPhone,
+          country: formData.senderCountry,
+          city: formData.senderCity,
+          street: formData.senderStreet,
+          postalCode: formData.senderPostalCode,
+        },
+        to: {
+          name: formData.receiverName,
+          phone: formData.receiverPhone,
+          country: formData.receiverCountry,
+          city: formData.receiverCity,
+          street: formData.receiverStreet,
+          postalCode: formData.receiverPostalCode,
+        },
+        package: {
           weight: parseFloat(formData.weight) || 0,
           length: parseFloat(formData.length) || 0,
           width: parseFloat(formData.width) || 0,
           height: parseFloat(formData.height) || 0,
-          contentDescription: formData.itemDescription || '',
-          isDraft,
-          // Cost breakdown
-          baseCost: rateBreakdown?.baseCost || 0,
-          insuranceCost: rateBreakdown?.insuranceCost || 0,
-          signatureCost: rateBreakdown?.signatureCost || 0,
-          packagingCost: rateBreakdown?.packagingCost || 0,
-          totalCost: calculatedPrice || 0,
-        }),
+          description: formData.itemDescription || '',
+        },
+        service: {
+          type: formData.serviceType,
+          pickupMethod: formData.pickupMethod,
+          shipmentType: shipmentType || 'Domestic',
+        },
+        additional: {
+          signature: formData.signatureRequired,
+          liquid: formData.containsLiquid,
+          insurance: formData.insurance,
+          packaging: formData.packaging,
+        },
+        rates: {
+          base: rateBreakdown?.baseCost || 0,
+          insurance: rateBreakdown?.insuranceCost || 0,
+          signature: rateBreakdown?.signatureCost || 0,
+          packaging: rateBreakdown?.packagingCost || 0,
+          total: calculatedPrice || 0,
+        },
+      }
+
+      // Determine URL and method based on edit mode and draft status
+      let url: string
+      let method: string
+
+      if (isEditMode && shipmentId) {
+        // Edit mode: use PUT to update existing shipment
+        url = `/api/shipments/${shipmentId}`
+        method = 'PUT'
+      } else {
+        // Create mode: use separate draft/finalize endpoints
+        url = isDraft ? '/api/shipments/draft' : '/api/shipments/finalize'
+        method = 'POST'
+      }
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody),
       })
 
       if (!response.ok) {
@@ -484,15 +524,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
         throw new Error(error.error || `Failed to ${isEditMode ? 'update' : 'create'} shipment`)
       }
 
-      const shipment = await response.json()
-
-      if (isDraft) {
-        // For draft, redirect to shipments
-        router.push('/shipments')
-      } else {
-        // For finalized, redirect to shipments
-        router.push('/shipments')
-      }
+      // Redirect to shipments list
+      router.push('/shipments')
     } catch (error) {
       console.error(`Error ${isEditMode ? 'updating' : 'creating'} shipment:`, error)
       throw error
@@ -501,45 +534,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     }
   }
 
-
-  const resetForm = () => {
-    setFormData({
-      senderName: '',
-      senderPhone: '',
-      senderCountry: '',
-      senderCity: '',
-      senderStreet: '',
-      senderPostalCode: '',
-      receiverName: '',
-      receiverPhone: '',
-      receiverCountry: '',
-      receiverCity: '',
-      receiverStreet: '',
-      receiverPostalCode: '',
-      weight: '',
-      length: '',
-      width: '',
-      height: '',
-      itemDescription: '',
-      serviceType: '',
-      signatureRequired: false,
-      containsLiquid: false,
-      insurance: false,
-      packaging: false,
-      pickupMethod: 'home',
-    })
-    setSenderCompleted(false)
-    setReceiverCompleted(false)
-    setPackageCompleted(false)
-    setShipmentType(null)
-    setSelectedService(null)
-    setCalculatedPrice(null)
-    setRateBreakdown(null)
-    setReceiverRules(null)
-    setPackageRules(null)
-    setAdditionalOptionsRules(null)
-    setServiceRules(null)
-  }
 
   // Effects - Load user and initial rules
   useEffect(() => {
@@ -694,7 +688,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     // State
     loading,
     errors,
-    successMessage,
     formData,
     isEditMode,
     // Rules

@@ -1,6 +1,6 @@
 'use client'
 
-import type { ServiceOption } from '@/lib/rules/types'
+import type { ServiceOption } from '@/lib/types'
 
 interface ServiceSelectionCardProps {
   serviceRules: any

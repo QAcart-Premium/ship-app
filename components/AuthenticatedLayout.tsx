@@ -3,12 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-
-interface User {
-  id: string
-  email: string
-  fullName: string
-}
+import type { User } from '@/lib/types'
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()

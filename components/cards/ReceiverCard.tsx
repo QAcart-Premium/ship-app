@@ -1,7 +1,7 @@
 'use client'
 
 import DynamicCard from '../DynamicCard'
-import type { CardRules } from '@/lib/rules/types'
+import type { CardRules } from '@/lib/types'
 
 interface ReceiverCardProps {
   rules: CardRules | null

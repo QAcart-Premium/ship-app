@@ -21,10 +21,6 @@ export default function RegisterPage() {
     city: '',
     street: '',
     postalCode: '',
-    // Payment
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvv: '',
   })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -52,10 +48,7 @@ export default function RegisterPage() {
       !formData.country ||
       !formData.city ||
       !formData.street ||
-      !formData.postalCode ||
-      !formData.cardNumber ||
-      !formData.cardExpiry ||
-      !formData.cardCvv
+      !formData.postalCode
     ) {
       setError('All fields are required')
       return
@@ -76,9 +69,6 @@ export default function RegisterPage() {
           city: formData.city,
           street: formData.street,
           postalCode: formData.postalCode,
-          cardNumber: formData.cardNumber,
-          cardExpiry: formData.cardExpiry,
-          cardCvv: formData.cardCvv,
         }),
       })
 
@@ -293,68 +283,6 @@ export default function RegisterPage() {
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="123 Main St"
                 />
-              </div>
-            </div>
-          </div>
-
-          {/* Payment Information */}
-          <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Payment Information</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              For testing, use card: 4111111111111111, CVV: 111, and any future expiry date
-            </p>
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700">
-                  Card Number *
-                </label>
-                <input
-                  id="cardNumber"
-                  name="cardNumber"
-                  type="text"
-                  required
-                  value={formData.cardNumber}
-                  onChange={handleChange}
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="4111111111111111"
-                  maxLength={16}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="cardExpiry" className="block text-sm font-medium text-gray-700">
-                    Expiry Date *
-                  </label>
-                  <input
-                    id="cardExpiry"
-                    name="cardExpiry"
-                    type="text"
-                    required
-                    value={formData.cardExpiry}
-                    onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="MM/YY"
-                    maxLength={5}
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="cardCvv" className="block text-sm font-medium text-gray-700">
-                    CVV *
-                  </label>
-                  <input
-                    id="cardCvv"
-                    name="cardCvv"
-                    type="text"
-                    required
-                    value={formData.cardCvv}
-                    onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="111"
-                    maxLength={4}
-                  />
-                </div>
               </div>
             </div>
           </div>

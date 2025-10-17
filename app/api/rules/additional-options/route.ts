@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import additionalOptionsRules from '@/lib/rules/additional-options.json'
-import countriesData from '@/lib/rules/countries.json'
 
 /**
  * POST /api/rules/additional-options

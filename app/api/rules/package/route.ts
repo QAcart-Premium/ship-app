@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import packageCardRules from '@/lib/rules/package-card.json'
 import countriesData from '@/lib/rules/countries.json'
-import type { ShipmentType } from '@/lib/rules/types'
+import type { ShipmentType } from '@/lib/types'
 
 /**
  * Determine if a country is a Gulf country

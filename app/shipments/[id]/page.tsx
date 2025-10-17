@@ -6,43 +6,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { Copy, Trash2, Edit } from 'lucide-react'
 import DeleteModal from '@/components/shipments/DeleteModal'
-
-interface Shipment {
-  id: number
-  trackingNumber: string
-  status: string
-  senderName: string
-  senderPhone: string
-  senderCountry: string
-  senderCity: string
-  senderStreet: string
-  senderPostalCode: string
-  receiverName: string
-  receiverPhone: string
-  receiverCountry: string
-  receiverCity: string
-  receiverStreet: string
-  receiverPostalCode: string
-  shipmentType: string
-  weight: number
-  length: number
-  width: number
-  height: number
-  contentDescription: string
-  serviceType: string
-  pickupMethod: string
-  containsLiquid: boolean
-  insurance: boolean
-  signatureRequired: boolean
-  packaging: boolean
-  baseCost: number
-  insuranceCost: number
-  signatureCost: number
-  packagingCost: number
-  totalCost: number
-  createdAt: string
-  updatedAt: string
-}
+import type { Shipment } from '@/lib/types'
 
 export default function ShipmentDetailPage() {
   const router = useRouter()
@@ -248,18 +212,18 @@ export default function ShipmentDetailPage() {
           <div className="space-y-3">
             <div>
               <div className="text-sm text-gray-500">Name</div>
-              <div className="font-medium text-gray-900">{shipment.senderName}</div>
+              <div className="font-medium text-gray-900">{shipment.from.name}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Phone</div>
-              <div className="font-medium text-gray-900">{shipment.senderPhone}</div>
+              <div className="font-medium text-gray-900">{shipment.from.phone}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Address</div>
               <div className="font-medium text-gray-900">
-                {shipment.senderStreet}<br />
-                {shipment.senderCity}, {shipment.senderPostalCode}<br />
-                {shipment.senderCountry}
+                {shipment.from.street}<br />
+                {shipment.from.city}, {shipment.from.postalCode}<br />
+                {shipment.from.country}
               </div>
             </div>
           </div>
@@ -271,18 +235,18 @@ export default function ShipmentDetailPage() {
           <div className="space-y-3">
             <div>
               <div className="text-sm text-gray-500">Name</div>
-              <div className="font-medium text-gray-900">{shipment.receiverName}</div>
+              <div className="font-medium text-gray-900">{shipment.to.name}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Phone</div>
-              <div className="font-medium text-gray-900">{shipment.receiverPhone}</div>
+              <div className="font-medium text-gray-900">{shipment.to.phone}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Address</div>
               <div className="font-medium text-gray-900">
-                {shipment.receiverStreet}<br />
-                {shipment.receiverCity}, {shipment.receiverPostalCode}<br />
-                {shipment.receiverCountry}
+                {shipment.to.street}<br />
+                {shipment.to.city}, {shipment.to.postalCode}<br />
+                {shipment.to.country}
               </div>
             </div>
           </div>
@@ -294,21 +258,21 @@ export default function ShipmentDetailPage() {
           <div className="space-y-3">
             <div>
               <div className="text-sm text-gray-500">Shipment Type</div>
-              <div className="font-medium text-gray-900">{shipment.shipmentType}</div>
+              <div className="font-medium text-gray-900">{shipment.service.shipmentType}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Weight</div>
-              <div className="font-medium text-gray-900">{shipment.weight} kg</div>
+              <div className="font-medium text-gray-900">{shipment.package.weight} kg</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Dimensions (L × W × H)</div>
               <div className="font-medium text-gray-900">
-                {shipment.length} × {shipment.width} × {shipment.height} cm
+                {shipment.package.length} × {shipment.package.width} × {shipment.package.height} cm
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Content Description</div>
-              <div className="font-medium text-gray-900">{shipment.contentDescription}</div>
+              <div className="font-medium text-gray-900">{shipment.package.description}</div>
             </div>
           </div>
         </div>
@@ -319,18 +283,18 @@ export default function ShipmentDetailPage() {
           <div className="space-y-3">
             <div>
               <div className="text-sm text-gray-500">Service Type</div>
-              <div className="font-medium text-gray-900">{shipment.serviceType}</div>
+              <div className="font-medium text-gray-900">{shipment.service.type}</div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Pickup Method</div>
               <div className="font-medium text-gray-900">
-                {shipment.pickupMethod === 'home' ? 'Home Pickup' : 'Postal Office Drop-off'}
+                {shipment.service.pickupMethod === 'home' ? 'Home Pickup' : 'Postal Office Drop-off'}
               </div>
             </div>
             <div>
               <div className="text-sm text-gray-500">Additional Options</div>
               <div className="space-y-1">
-                {shipment.insurance && (
+                {shipment.options.insurance && (
                   <div className="flex items-center text-sm">
                     <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -338,7 +302,7 @@ export default function ShipmentDetailPage() {
                     Insurance
                   </div>
                 )}
-                {shipment.signatureRequired && (
+                {shipment.options.signature && (
                   <div className="flex items-center text-sm">
                     <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -346,7 +310,7 @@ export default function ShipmentDetailPage() {
                     Signature Required
                   </div>
                 )}
-                {shipment.packaging && (
+                {shipment.options.packaging && (
                   <div className="flex items-center text-sm">
                     <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -354,7 +318,7 @@ export default function ShipmentDetailPage() {
                     Professional Packaging
                   </div>
                 )}
-                {shipment.containsLiquid && (
+                {shipment.options.liquid && (
                   <div className="flex items-center text-sm">
                     <svg className="w-4 h-4 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -362,7 +326,7 @@ export default function ShipmentDetailPage() {
                     Contains Liquid
                   </div>
                 )}
-                {!shipment.insurance && !shipment.signatureRequired && !shipment.packaging && !shipment.containsLiquid && (
+                {!shipment.options.insurance && !shipment.options.signature && !shipment.options.packaging && !shipment.options.liquid && (
                   <div className="text-sm text-gray-500">No additional options selected</div>
                 )}
               </div>
@@ -377,30 +341,30 @@ export default function ShipmentDetailPage() {
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Base Shipping Cost</span>
-            <span className="font-medium text-gray-900">${shipment.baseCost?.toFixed(2) || '0.00'}</span>
+            <span className="font-medium text-gray-900">${shipment.rate.base?.toFixed(2) || '0.00'}</span>
           </div>
-          {shipment.insuranceCost > 0 && (
+          {shipment.rate.insurance > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Insurance</span>
-              <span className="font-medium text-gray-900">${shipment.insuranceCost.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">${shipment.rate.insurance.toFixed(2)}</span>
             </div>
           )}
-          {shipment.signatureCost > 0 && (
+          {shipment.rate.signature > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Signature Required</span>
-              <span className="font-medium text-gray-900">${shipment.signatureCost.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">${shipment.rate.signature.toFixed(2)}</span>
             </div>
           )}
-          {shipment.packagingCost > 0 && (
+          {shipment.rate.packaging > 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Professional Packaging</span>
-              <span className="font-medium text-gray-900">${shipment.packagingCost.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">${shipment.rate.packaging.toFixed(2)}</span>
             </div>
           )}
           <div className="border-t border-gray-200 pt-2 mt-2">
             <div className="flex justify-between">
               <span className="text-lg font-semibold text-gray-900">Total Cost</span>
-              <span className="text-lg font-bold text-blue-600">${shipment.totalCost?.toFixed(2) || '0.00'}</span>
+              <span className="text-lg font-bold text-blue-600">${shipment.rate.total?.toFixed(2) || '0.00'}</span>
             </div>
           </div>
         </div>

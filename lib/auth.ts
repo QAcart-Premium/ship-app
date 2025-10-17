@@ -31,9 +31,9 @@ export async function verifyPassword(password: string, hash: string): Promise<bo
 }
 
 /**
- * Creates a signed JWT token
+ * Creates a signed JWT token (internal use only)
  */
-export function createJWT(userId: number, email: string): string {
+function createJWT(userId: number, email: string): string {
   return jwt.sign(
     { userId, email } as JWTPayload,
     JWT_SECRET,
@@ -42,9 +42,9 @@ export function createJWT(userId: number, email: string): string {
 }
 
 /**
- * Verifies and decodes a JWT token
+ * Verifies and decodes a JWT token (internal use only)
  */
-export function verifyJWT(token: string): JWTPayload | null {
+function verifyJWT(token: string): JWTPayload | null {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload
     return decoded
@@ -82,9 +82,9 @@ export function clearAuthCookie(): string {
 }
 
 /**
- * Gets user ID from JWT cookie
+ * Gets user ID from JWT cookie (internal use only)
  */
-export function getUserIdFromCookie(request: NextRequest): number | null {
+function getUserIdFromCookie(request: NextRequest): number | null {
   const cookieHeader = request.headers.get('cookie')
   if (!cookieHeader) return null
 
@@ -98,9 +98,9 @@ export function getUserIdFromCookie(request: NextRequest): number | null {
 }
 
 /**
- * Gets the current authenticated user
+ * Gets the current authenticated user (internal use only)
  */
-export async function getCurrentUser(request: NextRequest) {
+async function getCurrentUser(request: NextRequest) {
   const userId = getUserIdFromCookie(request)
   if (!userId) return null
 
@@ -115,9 +115,6 @@ export async function getCurrentUser(request: NextRequest) {
       city: true,
       street: true,
       postalCode: true,
-      cardNumber: true,
-      cardExpiry: true,
-      cardCvv: true,
       createdAt: true,
       updatedAt: true,
     },

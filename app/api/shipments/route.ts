@@ -1,12 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/db'
-import {
-  calculatePrice,
-  calculateEstimatedDelivery,
-  generateTrackingNumber,
-} from '@/lib/calculations'
-import { validateShipmentForm } from '@/lib/validations'
-import type { CreateShipmentData } from '@/lib/types'
+import { shipmentRepository } from '@/repositories'
 import { requireAuth } from '@/lib/auth'
 
 /**
@@ -14,19 +7,12 @@ import { requireAuth } from '@/lib/auth'
  * Retrieve all shipments with optional filtering, sorting, and pagination
  *
  * Query parameters:
- * - search: Search by tracking number, sender name, or receiver name
- * - status: Filter by status (Pending, In Transit, Delivered, Failed, or All)
- * - sortBy: Sort by field (createdAt, price, status)
+ * - status: Filter by status (draft, finalized, or all)
+ * - shipmentType: Filter by shipment type (Domestic, IntraGulf, International, or all)
+ * - sortBy: Sort by field (createdAt, totalCost, status)
  * - sortOrder: Sort order (asc, desc)
  * - page: Page number (default: 1)
  * - limit: Items per page (default: 10)
- *
- * This endpoint is great for testing:
- * - Query parameter handling
- * - Filtering logic
- * - Sorting
- * - Pagination
- * - Database queries
  */
 export async function GET(request: NextRequest) {
   try {
@@ -35,64 +21,26 @@ export async function GET(request: NextRequest) {
     if (response) return response
 
     const searchParams = request.nextUrl.searchParams
-    const search = searchParams.get('search') || ''
-    const status = searchParams.get('status') || 'All'
-    const shipmentType = searchParams.get('shipmentType') || 'all'
-    const sortBy = searchParams.get('sortBy') || 'createdAt'
-    const sortOrder = searchParams.get('sortOrder') || 'desc'
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
 
-    // Build where clause for filtering
-    const where: any = {
-      userId: user!.id, // Only show user's own shipments
+    // Build filters
+    const filters = {
+      status: searchParams.get('status') || undefined,
+      shipmentType: searchParams.get('shipmentType') || undefined,
+      sortBy: (searchParams.get('sortBy') || 'createdAt') as 'createdAt' | 'totalCost' | 'status',
+      sortOrder: (searchParams.get('sortOrder') || 'desc') as 'asc' | 'desc',
+      page: parseInt(searchParams.get('page') || '1'),
+      limit: parseInt(searchParams.get('limit') || '10'),
     }
 
-    // Search filter - searches across multiple fields
-    if (search) {
-      where.OR = [
-        { trackingNumber: { contains: search, mode: 'insensitive' } },
-        { senderName: { contains: search, mode: 'insensitive' } },
-        { receiverName: { contains: search, mode: 'insensitive' } },
-      ]
-    }
-
-    // Status filter
-    if (status !== 'All') {
-      where.status = status
-    }
-
-    // Shipment type filter
-    if (shipmentType !== 'all') {
-      where.shipmentType = shipmentType
-    }
-
-    // Calculate pagination
-    const skip = (page - 1) * limit
-
-    // Build orderBy clause
-    const orderBy: any = {}
-    if (sortBy === 'createdAt' || sortBy === 'price' || sortBy === 'status') {
-      orderBy[sortBy] = sortOrder
-    }
-
-    // Execute query with pagination
-    const [shipments, total] = await Promise.all([
-      prisma.shipment.findMany({
-        where,
-        orderBy,
-        skip,
-        take: limit,
-      }),
-      prisma.shipment.count({ where }),
-    ])
+    // Use repository to fetch shipments
+    const { shipments, total } = await shipmentRepository.findByUserId(user!.id, filters as any)
 
     return NextResponse.json({
       shipments,
       total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
+      page: filters.page,
+      limit: filters.limit,
+      totalPages: Math.ceil(total / filters.limit),
     })
   } catch (error) {
     console.error('Error fetching shipments:', error)
@@ -105,20 +53,15 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/shipments
- * Create a new shipment
+ * Create a new draft shipment
  *
- * Request body should include:
- * - senderName, senderStreet, senderCity, senderPostalCode, senderCountry, senderPhone
- * - receiverName, receiverStreet, receiverCity, receiverPostalCode, receiverCountry, receiverPhone
- * - weight, length, width, height
- * - serviceType
- *
- * This endpoint is great for testing:
- * - Input validation
- * - Business logic (price calculation)
- * - Data creation
- * - Error handling
- * - Response format
+ * Request body should include ShipmentFormData:
+ * - senderName, senderPhone, senderCountry, senderCity, senderStreet, senderPostalCode
+ * - receiverName, receiverPhone, receiverCountry, receiverCity, receiverStreet, receiverPostalCode
+ * - weight, length, width, height, itemDescription
+ * - serviceType, shipmentType, pickupMethod
+ * - signatureRequired, containsLiquid, insurance, packaging
+ * - Rates: baseCost, insuranceCost, signatureCost, packagingCost, totalCost
  */
 export async function POST(request: NextRequest) {
   try {
@@ -126,96 +69,24 @@ export async function POST(request: NextRequest) {
     const { user, response } = await requireAuth(request)
     if (response) return response
 
-    const body: any = await request.json()
-    const isDraft = body.isDraft || false
+    const body = await request.json()
 
-    // Validate form data only if not a draft
-    if (!isDraft) {
-      const validationErrors = validateShipmentForm({
-        ...body,
-        weight: Number(body.weight) || 0,
-        length: Number(body.length) || 0,
-        width: Number(body.width) || 0,
-        height: Number(body.height) || 0,
-      })
-
-      if (validationErrors.length > 0) {
-        return NextResponse.json(
-          {
-            error: 'Validation failed',
-            details: validationErrors.map((e) => e.message),
-          },
-          { status: 400 }
-        )
-      }
+    // Extract rates
+    const rates = {
+      base: Number(body.baseCost) || 0,
+      insurance: Number(body.insuranceCost) || 0,
+      signature: Number(body.signatureCost) || 0,
+      packaging: Number(body.packagingCost) || 0,
+      total: Number(body.totalCost) || 0,
     }
 
-    // Generate tracking number
-    const trackingNumber = generateTrackingNumber()
-
-    // Calculate price based on weight and service type
-    const price = calculatePrice(Number(body.weight), body.serviceType)
-
-    // Calculate estimated delivery
-    const estimatedDelivery = calculateEstimatedDelivery(body.serviceType)
-
-    // Create shipment in database
-    const shipment = await prisma.shipment.create({
-      data: {
-        userId: user!.id,
-        trackingNumber,
-        senderName: body.senderName || '',
-        senderStreet: body.senderStreet || '',
-        senderCity: body.senderCity || '',
-        senderPostalCode: body.senderPostalCode || '',
-        senderCountry: body.senderCountry || '',
-        senderPhone: body.senderPhone || '',
-        receiverName: body.receiverName || '',
-        receiverStreet: body.receiverStreet || '',
-        receiverCity: body.receiverCity || '',
-        receiverPostalCode: body.receiverPostalCode || '',
-        receiverCountry: body.receiverCountry || '',
-        receiverPhone: body.receiverPhone || '',
-        weight: Number(body.weight) || 0,
-        length: Number(body.length) || 0,
-        width: Number(body.width) || 0,
-        height: Number(body.height) || 0,
-        contentDescription: body.contentDescription || '',
-        shipmentType: body.shipmentType || 'Domestic',
-        pickupMethod: body.pickupMethod || 'home',
-        serviceType: body.serviceType || 'Standard',
-        signatureRequired: body.signatureRequired || false,
-        containsLiquid: body.containsLiquid || false,
-        insurance: body.insurance || false,
-        packaging: body.packaging || false,
-        price,
-        baseCost: Number(body.baseCost) || 0,
-        insuranceCost: Number(body.insuranceCost) || 0,
-        signatureCost: Number(body.signatureCost) || 0,
-        packagingCost: Number(body.packagingCost) || 0,
-        totalCost: Number(body.totalCost) || 0,
-        isDraft,
-        status: isDraft ? 'draft' : 'finalized',
-        estimatedDelivery: isDraft ? null : estimatedDelivery,
-        trackingEvents: isDraft ? undefined : {
-          create: {
-            status: 'Order Placed',
-            location: 'Online',
-            description: 'Shipment order has been created and is ready for pickup',
-            timestamp: new Date(),
-          },
-        },
-      },
-      include: {
-        trackingEvents: true,
-      },
-    })
+    // Create shipment using repository
+    const shipment = await shipmentRepository.create(user!.id, body, rates)
 
     return NextResponse.json(shipment, { status: 201 })
   } catch (error) {
     console.error('Error creating shipment:', error)
 
-    // Handle specific errors
     if (error instanceof Error) {
       return NextResponse.json(
         { error: 'Failed to create shipment', details: error.message },

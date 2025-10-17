@@ -18,7 +18,6 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
   const {
     loading,
     errors,
-    successMessage,
     formData,
     isEditMode,
     senderRules,
@@ -41,16 +40,6 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-7xl mx-auto">
-      {/* Success message */}
-      {successMessage && (
-        <div
-          className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded mb-8"
-          data-testid="success-message"
-        >
-          {successMessage}
-        </div>
-      )}
-
       {/* General error message */}
       {errors.general && (
         <div

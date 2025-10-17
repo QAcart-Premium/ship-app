@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { clearAuthCookie } from '@/lib/auth'
 
 /**
  * POST /api/auth/logout
  * Logout user by clearing authentication cookie
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const cookie = clearAuthCookie()
 

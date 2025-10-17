@@ -37,6 +37,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const search = searchParams.get('search') || ''
     const status = searchParams.get('status') || 'All'
+    const shipmentType = searchParams.get('shipmentType') || 'all'
     const sortBy = searchParams.get('sortBy') || 'createdAt'
     const sortOrder = searchParams.get('sortOrder') || 'desc'
     const page = parseInt(searchParams.get('page') || '1')
@@ -59,6 +60,11 @@ export async function GET(request: NextRequest) {
     // Status filter
     if (status !== 'All') {
       where.status = status
+    }
+
+    // Shipment type filter
+    if (shipmentType !== 'all') {
+      where.shipmentType = shipmentType
     }
 
     // Calculate pagination
@@ -174,19 +180,28 @@ export async function POST(request: NextRequest) {
         length: Number(body.length) || 0,
         width: Number(body.width) || 0,
         height: Number(body.height) || 0,
+        contentDescription: body.contentDescription || '',
+        shipmentType: body.shipmentType || 'Domestic',
         pickupMethod: body.pickupMethod || 'home',
         serviceType: body.serviceType || 'Standard',
         signatureRequired: body.signatureRequired || false,
         containsLiquid: body.containsLiquid || false,
+        insurance: body.insurance || false,
+        packaging: body.packaging || false,
         price,
+        baseCost: Number(body.baseCost) || 0,
+        insuranceCost: Number(body.insuranceCost) || 0,
+        signatureCost: Number(body.signatureCost) || 0,
+        packagingCost: Number(body.packagingCost) || 0,
+        totalCost: Number(body.totalCost) || 0,
         isDraft,
-        status: isDraft ? 'Draft' : 'Pending',
+        status: isDraft ? 'draft' : 'finalized',
         estimatedDelivery: isDraft ? null : estimatedDelivery,
         trackingEvents: isDraft ? undefined : {
           create: {
             status: 'Order Placed',
             location: 'Online',
-            description: 'Shipment order has been created and is awaiting pickup',
+            description: 'Shipment order has been created and is ready for pickup',
             timestamp: new Date(),
           },
         },

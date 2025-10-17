@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import type { UpdateStatusData } from '@/lib/types'
 import { requireAuth } from '@/lib/auth'
+import { calculatePrice } from '@/lib/calculations'
 
 /**
  * GET /api/shipments/[id]
@@ -44,7 +45,7 @@ export async function GET(
       return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
     }
 
-    return NextResponse.json(shipment)
+    return NextResponse.json({ shipment })
   } catch (error) {
     console.error('Error fetching shipment:', error)
     return NextResponse.json(
@@ -56,7 +57,7 @@ export async function GET(
 
 /**
  * PUT /api/shipments/[id]
- * Update a shipment (typically for status updates)
+ * Update a shipment (for editing draft shipments)
  *
  * This endpoint is great for testing:
  * - Data updates
@@ -79,7 +80,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
     }
 
-    const body: UpdateStatusData = await request.json()
+    const body: any = await request.json()
 
     // Check if shipment exists and belongs to user
     const existingShipment = await prisma.shipment.findFirst({
@@ -93,28 +94,53 @@ export async function PUT(
       return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
     }
 
-    // Don't allow updates to delivered or failed shipments
-    if (existingShipment.status === 'Delivered' || existingShipment.status === 'Failed') {
+    // Only allow updating draft shipments
+    if (existingShipment.status !== 'draft') {
       return NextResponse.json(
-        { error: `Cannot update ${existingShipment.status.toLowerCase()} shipment` },
+        { error: 'Can only edit draft shipments' },
         { status: 400 }
       )
     }
 
-    // Update shipment status
-    const updateData: any = {
-      status: body.status,
-      updatedAt: new Date(),
-    }
+    // Recalculate price based on weight and service type
+    const price = calculatePrice(Number(body.weight), body.serviceType)
 
-    // If status is being set to Delivered, set actual delivery date
-    if (body.status === 'Delivered') {
-      updateData.actualDelivery = new Date()
-    }
-
+    // Update shipment with new data
     const shipment = await prisma.shipment.update({
       where: { id },
-      data: updateData,
+      data: {
+        senderName: body.senderName || '',
+        senderStreet: body.senderStreet || '',
+        senderCity: body.senderCity || '',
+        senderPostalCode: body.senderPostalCode || '',
+        senderCountry: body.senderCountry || '',
+        senderPhone: body.senderPhone || '',
+        receiverName: body.receiverName || '',
+        receiverStreet: body.receiverStreet || '',
+        receiverCity: body.receiverCity || '',
+        receiverPostalCode: body.receiverPostalCode || '',
+        receiverCountry: body.receiverCountry || '',
+        receiverPhone: body.receiverPhone || '',
+        weight: Number(body.weight) || 0,
+        length: Number(body.length) || 0,
+        width: Number(body.width) || 0,
+        height: Number(body.height) || 0,
+        contentDescription: body.contentDescription || '',
+        shipmentType: body.shipmentType || 'Domestic',
+        pickupMethod: body.pickupMethod || 'home',
+        serviceType: body.serviceType || 'Standard',
+        signatureRequired: body.signatureRequired || false,
+        containsLiquid: body.containsLiquid || false,
+        insurance: body.insurance || false,
+        packaging: body.packaging || false,
+        price,
+        baseCost: Number(body.baseCost) || 0,
+        insuranceCost: Number(body.insuranceCost) || 0,
+        signatureCost: Number(body.signatureCost) || 0,
+        packagingCost: Number(body.packagingCost) || 0,
+        totalCost: Number(body.totalCost) || 0,
+        updatedAt: new Date(),
+      },
       include: {
         trackingEvents: {
           orderBy: { timestamp: 'asc' },
@@ -177,16 +203,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
     }
 
-    // Business rule: Can only cancel pending or picked up shipments
-    // This is a great test scenario for business logic validation
-    if (
-      existingShipment.status !== 'Pending' &&
-      existingShipment.status !== 'Picked Up'
-    ) {
+    // Business rule: Can delete draft shipments or cancel pending/in_transit shipments
+    // Cannot delete delivered shipments
+    if (existingShipment.status === 'delivered') {
       return NextResponse.json(
         {
-          error: 'Cannot cancel shipment',
-          details: 'Only pending or picked up shipments can be cancelled',
+          error: 'Cannot delete shipment',
+          details: 'Delivered shipments cannot be deleted',
         },
         { status: 400 }
       )
@@ -199,7 +222,9 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Shipment cancelled successfully',
+      message: existingShipment.status === 'draft'
+        ? 'Shipment deleted successfully'
+        : 'Shipment cancelled successfully',
     })
   } catch (error) {
     console.error('Error deleting shipment:', error)

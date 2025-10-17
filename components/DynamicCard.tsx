@@ -1,5 +1,6 @@
 'use client'
 
+import { User, Users, Package, CheckCircle } from 'lucide-react'
 import type { CardRules, FieldRule, SelectOption } from '@/lib/rules/types'
 
 interface DynamicCardProps {
@@ -182,6 +183,15 @@ export default function DynamicCard({
     ([name]) => name.includes('Street') || name.includes('Country')
   )
 
+  // Determine icon based on card title
+  const getIcon = () => {
+    const title = rules.title.toLowerCase()
+    if (title.includes('sender')) return <User className="w-5 h-5 text-blue-600" />
+    if (title.includes('receiver')) return <Users className="w-5 h-5 text-blue-600" />
+    if (title.includes('package')) return <Package className="w-5 h-5 text-blue-600" />
+    return <CheckCircle className="w-5 h-5 text-blue-600" />
+  }
+
   return (
     <div
       className={`bg-white p-6 rounded-lg shadow ${
@@ -189,7 +199,10 @@ export default function DynamicCard({
       }`}
     >
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">{rules.title}</h2>
+        <div className="flex items-center gap-2">
+          {getIcon()}
+          <h2 className="text-xl font-semibold">{rules.title}</h2>
+        </div>
         {shipmentType && (
           <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
             {shipmentType}

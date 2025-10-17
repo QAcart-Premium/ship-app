@@ -73,6 +73,10 @@ model Shipment {
   length     Float  // in cm
   width      Float  // in cm
   height     Float  // in cm
+  contentDescription String @default("")
+
+  // Shipment type: Domestic, International, or IntraGulf
+  shipmentType String @default("Domestic")
 
   // Pickup method - great for testing radio button functionality
   pickupMethod String @default("home") // 'home' or 'postal_office'
@@ -85,9 +89,20 @@ model Shipment {
   signatureRequired Boolean @default(false)
   containsLiquid    Boolean @default(false)
 
+  // Additional options
+  insurance Boolean @default(false)
+  packaging Boolean @default(false)
+
   // Price calculation based on weight + service type
   // Excellent for testing business logic and calculations
   price Float
+
+  // Cost breakdown
+  baseCost       Float @default(0)
+  insuranceCost  Float @default(0)
+  signatureCost  Float @default(0)
+  packagingCost  Float @default(0)
+  totalCost      Float @default(0)
 
   // Draft status - useful for testing save functionality
   isDraft Boolean @default(false)

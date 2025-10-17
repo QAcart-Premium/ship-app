@@ -1,5 +1,6 @@
 'use client'
 
+import { Save, CheckCircle } from 'lucide-react'
 import SenderCard from './cards/SenderCard'
 import ReceiverCard from './cards/ReceiverCard'
 import PackageCard from './cards/PackageCard'
@@ -9,12 +10,18 @@ import RateCard from './cards/RateCard'
 import PaymentConfirmationModal from './PaymentConfirmationModal'
 import { useShipmentForm } from '@/hooks/useShipmentForm'
 
-export default function ShipmentForm() {
+interface ShipmentFormProps {
+  editId?: string | null
+  repeatId?: string | null
+}
+
+export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
   const {
     loading,
     errors,
     successMessage,
     formData,
+    isEditMode,
     senderRules,
     receiverRules,
     packageRules,
@@ -35,7 +42,7 @@ export default function ShipmentForm() {
     handleServiceSelect,
     handleSubmit,
     handlePaymentConfirm,
-  } = useShipmentForm()
+  } = useShipmentForm(editId, repeatId)
 
   return (
     <form onSubmit={handleSubmit} className="max-w-7xl mx-auto">
@@ -56,6 +63,16 @@ export default function ShipmentForm() {
           data-testid="error-message"
         >
           {errors.general}
+        </div>
+      )}
+
+      {/* Payment error message */}
+      {errors.payment && (
+        <div
+          className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-8"
+          data-testid="payment-error-message"
+        >
+          {errors.payment}
         </div>
       )}
 
@@ -123,17 +140,19 @@ export default function ShipmentForm() {
           onClick={(e) => handleSubmit(e, true)}
           disabled={loading || !packageCompleted}
           data-testid="save-draft-button"
-          className="px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-400"
+          className="flex items-center gap-2 px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-400 transition-colors"
         >
-          {loading ? 'Saving...' : 'Save as Draft'}
+          <Save className="w-4 h-4" />
+          {loading ? 'Saving...' : (isEditMode ? 'Save' : 'Save as Draft')}
         </button>
         <button
           type="submit"
           onClick={(e) => handleSubmit(e, false)}
           disabled={loading || !selectedService || !calculatedPrice}
           data-testid="finalize-button"
-          className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
+          <CheckCircle className="w-4 h-4" />
           {loading ? 'Finalizing...' : 'Finalize Shipment'}
         </button>
       </div>

@@ -3,7 +3,7 @@
  * These validations are excellent for testing input validation scenarios
  */
 
-import { SERVICE_TYPES, ServiceType } from './calculations'
+import { SERVICE_TYPES, ServiceType, getMaxWeight } from './calculations'
 
 export interface ValidationError {
   field: string
@@ -28,29 +28,29 @@ export interface ShipmentFormData {
   width: number
   height: number
   pickupMethod: string
-  serviceType: ServiceType
+  serviceType: ServiceType | string // Support both old enum and new service IDs
   signatureRequired: boolean
   containsLiquid: boolean
 }
 
 /**
  * Validate phone number format
- * Accepts: 555-0123, (555) 012-3456, 555.012.3456, 5550123456
+ * Accepts: 555-0123, (555) 012-3456, 555.012.3456, 5550123456, +31627004821
  *
  * Test scenarios:
- * - Valid formats
- * - Invalid formats (too short, too long, special characters)
- * - International formats (optional enhancement)
+ * - Valid formats (domestic and international)
+ * - Invalid formats (too short, special characters)
+ * - International formats with country codes
  */
 export function validatePhone(phone: string): ValidationError | null {
   // Remove all non-digit characters for validation
   const digitsOnly = phone.replace(/\D/g, '')
 
-  // Should have 10 digits (US phone number)
-  if (digitsOnly.length !== 10) {
+  // Should have at least 10 digits (supports both domestic and international)
+  if (digitsOnly.length < 10) {
     return {
       field: 'phone',
-      message: 'Phone number must be 10 digits',
+      message: 'Phone number must be at least 10 digits',
     }
   }
 
@@ -157,7 +157,7 @@ export function validatePostalCode(postalCode: string, fieldName: string): Valid
  */
 export function validateWeight(
   weight: number,
-  serviceType: ServiceType
+  serviceType: ServiceType | string
 ): ValidationError | null {
   if (!weight || weight <= 0) {
     return {
@@ -166,18 +166,13 @@ export function validateWeight(
     }
   }
 
-  const config = SERVICE_TYPES[serviceType]
-  if (!config) {
-    return {
-      field: 'serviceType',
-      message: 'Invalid service type',
-    }
-  }
+  // Use isValidWeight from calculations which supports both old and new service types
+  const maxWeight = getMaxWeight(serviceType)
 
-  if (weight > config.maxWeight) {
+  if (weight > maxWeight) {
     return {
       field: 'weight',
-      message: `Weight cannot exceed ${config.maxWeight}kg for ${serviceType} service`,
+      message: `Weight cannot exceed ${maxWeight}kg for ${serviceType} service`,
     }
   }
 
@@ -262,14 +257,29 @@ export function validateServiceType(serviceType: string): ValidationError | null
     }
   }
 
-  if (!SERVICE_TYPES[serviceType as ServiceType]) {
-    return {
-      field: 'serviceType',
-      message: 'Invalid service type selected',
-    }
+  // Check if it's an old service type (for backward compatibility)
+  if (SERVICE_TYPES[serviceType as ServiceType]) {
+    return null
   }
 
-  return null
+  // Check if it's a new service ID (e.g., "domestic_standard", "gulf_express", etc.)
+  const validServiceIds = [
+    'domestic_standard',
+    'domestic_express',
+    'gulf_standard',
+    'gulf_express',
+    'international_economy',
+    'international_standard',
+  ]
+
+  if (validServiceIds.includes(serviceType)) {
+    return null
+  }
+
+  return {
+    field: 'serviceType',
+    message: 'Invalid service type selected',
+  }
 }
 
 /**
@@ -288,8 +298,7 @@ export function validateShipmentForm(data: ShipmentFormData): ValidationError[] 
   const senderNameError = validateName(data.senderName, 'Sender name')
   if (senderNameError) errors.push(senderNameError)
 
-  const senderStreetError = validateRequiredField(data.senderStreet, 'senderStreet', 5)
-  if (senderStreetError) errors.push(senderStreetError)
+  // Street is optional (rules-based validation handles country-specific requirements)
 
   const senderCityError = validateRequiredField(data.senderCity, 'senderCity', 2)
   if (senderCityError) errors.push(senderCityError)
@@ -309,8 +318,7 @@ export function validateShipmentForm(data: ShipmentFormData): ValidationError[] 
   const receiverNameError = validateName(data.receiverName, 'Receiver name')
   if (receiverNameError) errors.push(receiverNameError)
 
-  const receiverStreetError = validateRequiredField(data.receiverStreet, 'receiverStreet', 5)
-  if (receiverStreetError) errors.push(receiverStreetError)
+  // Street is optional (rules-based validation handles country-specific requirements)
 
   const receiverCityError = validateRequiredField(data.receiverCity, 'receiverCity', 2)
   if (receiverCityError) errors.push(receiverCityError)

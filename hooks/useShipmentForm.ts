@@ -2,13 +2,17 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CardRules, ServiceOption, ShipmentType } from '@/lib/rules/types'
 
-export function useShipmentForm() {
+export function useShipmentForm(editId?: string | null, repeatId?: string | null) {
   const router = useRouter()
 
   // State
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [isEditMode, setIsEditMode] = useState(!!editId)
+  const [shipmentId, setShipmentId] = useState<number | null>(
+    editId ? parseInt(editId) : repeatId ? parseInt(repeatId) : null
+  )
 
   // Payment modal state
   const [showPaymentModal, setShowPaymentModal] = useState(false)
@@ -71,16 +75,21 @@ export function useShipmentForm() {
       const data = await response.json()
       const user = data.user
 
-      // Pre-fill sender data from user info
-      setFormData((prev) => ({
-        ...prev,
-        senderName: user.fullName,
-        senderPhone: user.phone,
-        senderCountry: user.country,
-        senderCity: user.city,
-        senderStreet: user.street,
-        senderPostalCode: user.postalCode,
-      }))
+      // Pre-fill sender data from user info (only if not in edit mode)
+      if (!isEditMode) {
+        setFormData((prev) => ({
+          ...prev,
+          senderName: user.fullName,
+          senderPhone: user.phone,
+          senderCountry: user.country,
+          senderCity: user.city,
+          senderStreet: user.street,
+          senderPostalCode: user.postalCode,
+        }))
+
+        // Mark sender as completed since user data is pre-filled
+        setSenderCompleted(true)
+      }
 
       // Get masked card number for payment modal
       const cardResponse = await fetch('/api/user/payment-info')
@@ -88,13 +97,60 @@ export function useShipmentForm() {
         const cardData = await cardResponse.json()
         setMaskedCardNumber(cardData.maskedCardNumber)
       }
-
-      // Mark sender as completed since user data is pre-filled
-      setSenderCompleted(true)
     } catch (error) {
       console.error('Error loading user:', error)
       // Redirect to login on error
       window.location.href = '/login'
+    }
+  }
+
+  const loadShipment = async () => {
+    if (!shipmentId) return
+
+    try {
+      const response = await fetch(`/api/shipments/${shipmentId}`)
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setErrors({ general: 'Shipment not found' })
+          return
+        }
+        throw new Error('Failed to load shipment')
+      }
+
+      const data = await response.json()
+      const shipment = data.shipment
+
+      // Pre-fill all form fields with shipment data
+      // Let the rules system handle field configuration
+      setFormData({
+        senderName: shipment.senderName || '',
+        senderPhone: shipment.senderPhone || '',
+        senderCountry: shipment.senderCountry || '',
+        senderCity: shipment.senderCity || '',
+        senderStreet: shipment.senderStreet || '',
+        senderPostalCode: shipment.senderPostalCode || '',
+        receiverName: shipment.receiverName || '',
+        receiverPhone: shipment.receiverPhone || '',
+        receiverCountry: shipment.receiverCountry || '',
+        receiverCity: shipment.receiverCity || '',
+        receiverStreet: shipment.receiverStreet || '',
+        receiverPostalCode: shipment.receiverPostalCode || '',
+        weight: shipment.weight?.toString() || '',
+        length: shipment.length?.toString() || '',
+        width: shipment.width?.toString() || '',
+        height: shipment.height?.toString() || '',
+        itemDescription: shipment.contentDescription || '',
+        serviceType: shipment.serviceType || '',
+        signatureRequired: shipment.signatureRequired || false,
+        containsLiquid: shipment.containsLiquid || false,
+        pickupMethod: shipment.pickupMethod || 'home',
+      })
+
+      // The rules system and completion tracking will handle the rest
+    } catch (error) {
+      console.error('Error loading shipment:', error)
+      setErrors({ general: error instanceof Error ? error.message : 'Failed to load shipment' })
     }
   }
 
@@ -378,7 +434,7 @@ export function useShipmentForm() {
 
   const handleServiceSelect = (service: ServiceOption) => {
     setSelectedService(service)
-    setFormData((prev) => ({ ...prev, serviceType: service.name }))
+    setFormData((prev) => ({ ...prev, serviceType: service.id }))
   }
 
   const handleSubmit = async (e: React.FormEvent, isDraft: boolean = false) => {
@@ -397,35 +453,56 @@ export function useShipmentForm() {
   const createShipment = async (isDraft: boolean = false) => {
     setLoading(true)
     try {
-      const response = await fetch('/api/shipments', {
-        method: 'POST',
+      const url = isEditMode && shipmentId ? `/api/shipments/${shipmentId}` : '/api/shipments'
+      const method = isEditMode && shipmentId ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
+          shipmentType,
           weight: parseFloat(formData.weight) || 0,
           length: parseFloat(formData.length) || 0,
           width: parseFloat(formData.width) || 0,
           height: parseFloat(formData.height) || 0,
+          contentDescription: formData.itemDescription || '',
           isDraft,
+          // Cost breakdown
+          baseCost: rateBreakdown?.baseCost || 0,
+          insuranceCost: rateBreakdown?.insuranceCost || 0,
+          signatureCost: rateBreakdown?.signatureCost || 0,
+          packagingCost: rateBreakdown?.packagingCost || 0,
+          totalCost: calculatedPrice || 0,
+          // Additional options (derive from costs)
+          insurance: (rateBreakdown?.insuranceCost || 0) > 0,
+          packaging: (rateBreakdown?.packagingCost || 0) > 0,
         }),
       })
 
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Failed to create shipment')
+
+        // If there are validation details, format them nicely
+        if (error.details && Array.isArray(error.details)) {
+          const errorMsg = `${error.error}: ${error.details.join(', ')}`
+          throw new Error(errorMsg)
+        }
+
+        throw new Error(error.error || `Failed to ${isEditMode ? 'update' : 'create'} shipment`)
       }
 
       const shipment = await response.json()
 
       if (isDraft) {
-        // For draft, redirect to overview
-        router.push('/overview')
+        // For draft, redirect to shipments with success message
+        router.push('/shipments?success=true')
       } else {
-        // For finalized, redirect to shipment detail page
-        router.push(`/shipment/${shipment.id}`)
+        // For finalized, redirect to shipments with success message
+        router.push('/shipments?success=true')
       }
     } catch (error) {
-      console.error('Error creating shipment:', error)
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} shipment:`, error)
       throw error
     } finally {
       setLoading(false)
@@ -442,7 +519,9 @@ export function useShipmentForm() {
 
       if (!paymentResponse.ok) {
         const error = await paymentResponse.json()
-        throw new Error(error.error || 'Payment failed')
+        setShowPaymentModal(false)
+        setErrors({ payment: error.error || 'Payment failed' })
+        return
       }
 
       // Payment successful, create shipment
@@ -452,7 +531,19 @@ export function useShipmentForm() {
       setShowPaymentModal(false)
     } catch (error) {
       setShowPaymentModal(false)
-      throw error
+
+      // Parse and display validation errors
+      if (error instanceof Error) {
+        const errorMessage = error.message
+
+        // Try to extract validation details from error message
+        if (errorMessage.includes('Validation failed')) {
+          // The error might contain details, display it as a general error
+          setErrors({ general: errorMessage })
+        } else {
+          setErrors({ general: errorMessage })
+        }
+      }
     }
   }
 
@@ -497,6 +588,11 @@ export function useShipmentForm() {
   useEffect(() => {
     loadUser()
     loadSenderRules()
+
+    // Load shipment data if in edit or repeat mode
+    if (shipmentId && (isEditMode || repeatId)) {
+      loadShipment()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -621,12 +717,27 @@ export function useShipmentForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.senderCountry, formData.receiverCountry, formData.weight])
 
+  // In edit or repeat mode, set the selected service when serviceRules loads
+  useEffect(() => {
+    if ((isEditMode || repeatId) && serviceRules && formData.serviceType && !selectedService) {
+      // Find the matching service from available services
+      const matchingService = serviceRules.services?.find(
+        (service: ServiceOption) => service.id === formData.serviceType
+      )
+      if (matchingService) {
+        setSelectedService(matchingService)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [serviceRules, isEditMode, repeatId])
+
   return {
     // State
     loading,
     errors,
     successMessage,
     formData,
+    isEditMode,
     // Rules
     senderRules,
     receiverRules,

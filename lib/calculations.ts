@@ -38,6 +38,52 @@ export const SERVICE_TYPES: Record<ServiceType, ServiceTypeConfig> = {
   },
 }
 
+// New service type configurations from rules
+const NEW_SERVICE_CONFIGS: Record<string, ServiceTypeConfig> = {
+  domestic_standard: {
+    maxWeight: 50,
+    basePrice: 15,
+    pricePerKg: 0.5,
+    deliveryDays: 3,
+    description: 'Standard domestic delivery (2-3 business days)',
+  },
+  domestic_express: {
+    maxWeight: 30,
+    basePrice: 30,
+    pricePerKg: 1,
+    deliveryDays: 1,
+    description: 'Express domestic delivery (1 business day)',
+  },
+  gulf_standard: {
+    maxWeight: 30,
+    basePrice: 25,
+    pricePerKg: 1.5,
+    deliveryDays: 5,
+    description: 'Standard Gulf regional shipping (4-5 business days)',
+  },
+  gulf_express: {
+    maxWeight: 20,
+    basePrice: 45,
+    pricePerKg: 2.5,
+    deliveryDays: 2,
+    description: 'Express Gulf regional shipping (2 business days)',
+  },
+  international_economy: {
+    maxWeight: 25,
+    basePrice: 35,
+    pricePerKg: 2,
+    deliveryDays: 10,
+    description: 'Economy international shipping (8-10 business days)',
+  },
+  international_standard: {
+    maxWeight: 25,
+    basePrice: 50,
+    pricePerKg: 3,
+    deliveryDays: 7,
+    description: 'Standard international shipping (5-7 business days)',
+  },
+}
+
 /**
  * Calculate shipping price based on weight and service type
  * Important: This is a core business logic function - perfect for unit testing!
@@ -49,8 +95,15 @@ export const SERVICE_TYPES: Record<ServiceType, ServiceTypeConfig> = {
  * - Exact boundary values (e.g., exactly 10kg for Overnight)
  * - Different service types with same weight
  */
-export function calculatePrice(weight: number, serviceType: ServiceType): number {
-  const config = SERVICE_TYPES[serviceType]
+export function calculatePrice(weight: number, serviceType: ServiceType | string): number {
+  // Try old service types first
+  let config = SERVICE_TYPES[serviceType as ServiceType]
+
+  // If not found, try new service IDs
+  if (!config) {
+    config = NEW_SERVICE_CONFIGS[serviceType]
+  }
+
   if (!config) {
     throw new Error(`Invalid service type: ${serviceType}`)
   }
@@ -82,10 +135,17 @@ export function calculatePrice(weight: number, serviceType: ServiceType): number
  * - Date calculations should be consistent
  */
 export function calculateEstimatedDelivery(
-  serviceType: ServiceType,
+  serviceType: ServiceType | string,
   orderDate: Date = new Date()
 ): Date {
-  const config = SERVICE_TYPES[serviceType]
+  // Try old service types first
+  let config = SERVICE_TYPES[serviceType as ServiceType]
+
+  // If not found, try new service IDs
+  if (!config) {
+    config = NEW_SERVICE_CONFIGS[serviceType]
+  }
+
   if (!config) {
     throw new Error(`Invalid service type: ${serviceType}`)
   }
@@ -121,8 +181,15 @@ export function generateTrackingNumber(): string {
  * - Negative weights
  * - Zero weight
  */
-export function isValidWeight(weight: number, serviceType: ServiceType): boolean {
-  const config = SERVICE_TYPES[serviceType]
+export function isValidWeight(weight: number, serviceType: ServiceType | string): boolean {
+  // Try old service types first
+  let config = SERVICE_TYPES[serviceType as ServiceType]
+
+  // If not found, try new service IDs
+  if (!config) {
+    config = NEW_SERVICE_CONFIGS[serviceType]
+  }
+
   if (!config) {
     return false
   }
@@ -132,8 +199,15 @@ export function isValidWeight(weight: number, serviceType: ServiceType): boolean
 /**
  * Get the maximum allowed weight for a service type
  */
-export function getMaxWeight(serviceType: ServiceType): number {
-  const config = SERVICE_TYPES[serviceType]
+export function getMaxWeight(serviceType: ServiceType | string): number {
+  // Try old service types first
+  let config = SERVICE_TYPES[serviceType as ServiceType]
+
+  // If not found, try new service IDs
+  if (!config) {
+    config = NEW_SERVICE_CONFIGS[serviceType]
+  }
+
   if (!config) {
     throw new Error(`Invalid service type: ${serviceType}`)
   }

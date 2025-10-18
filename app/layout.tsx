@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { AuthProvider } from '@/contexts/AuthContext'
 import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import './globals.css'
 
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AuthenticatedLayout>{children}</AuthenticatedLayout>
+        <AuthProvider>
+          <AuthenticatedLayout>{children}</AuthenticatedLayout>
+        </AuthProvider>
       </body>
     </html>
   )

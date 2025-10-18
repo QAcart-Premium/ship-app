@@ -1,67 +1,38 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import type { User } from '@/lib/types'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { user, loading, logout } = useAuth()
   const [loggingOut, setLoggingOut] = useState(false)
 
   // Public routes that don't require authentication
   const publicRoutes = ['/login', '/register']
   const isPublicRoute = publicRoutes.includes(pathname)
 
+  // Handle redirects based on auth state
   useEffect(() => {
-    checkAuth()
-  }, [pathname])
+    if (loading) return
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch('/api/auth/me')
-
-      if (response.ok) {
-        const data = await response.json()
-        setUser(data.user)
-
-        // If user is authenticated and on a public route, redirect to home
-        if (isPublicRoute) {
-          router.push('/')
-        }
-      } else {
-        setUser(null)
-
-        // If not authenticated and not on a public route, redirect to login
-        if (!isPublicRoute) {
-          router.push('/login')
-        }
-      }
-    } catch (error) {
-      console.error('Auth check error:', error)
-      setUser(null)
-      if (!isPublicRoute) {
-        router.push('/login')
-      }
-    } finally {
-      setLoading(false)
+    // If user is authenticated and on a public route, redirect to home
+    if (user && isPublicRoute) {
+      router.push('/')
     }
-  }
+    // If not authenticated and not on a public route, redirect to login
+    else if (!user && !isPublicRoute) {
+      router.push('/login')
+    }
+  }, [user, loading, isPublicRoute, pathname])
 
   const handleLogout = async () => {
     setLoggingOut(true)
     try {
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-      })
-
-      if (response.ok) {
-        setUser(null)
-        router.push('/login')
-      }
+      await logout()
     } catch (error) {
       console.error('Logout error:', error)
     } finally {

@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import type { CardRules, ServiceOption, ShipmentType } from '@/lib/types'
 
 export function useShipmentForm(editId?: string | null, repeatId?: string | null) {
   const router = useRouter()
+  const { user } = useAuth()
 
   // State
   const [loading, setLoading] = useState(false)
@@ -58,41 +60,26 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     pickupMethod: 'home',
   })
 
-  // API Loaders
-  const loadUser = async () => {
-    try {
-      const response = await fetch('/api/auth/me')
+  // Pre-fill user data when user is loaded from context
+  useEffect(() => {
+    if (!user) return
 
-      if (!response.ok) {
-        // User not authenticated, redirect to login
-        window.location.href = '/login'
-        return
-      }
+    // Pre-fill sender data from user info (only if not in edit mode)
+    if (!isEditMode) {
+      setFormData((prev) => ({
+        ...prev,
+        senderName: user.fullName,
+        senderPhone: user.phone,
+        senderCountry: user.country,
+        senderCity: user.city,
+        senderStreet: user.street,
+        senderPostalCode: user.postalCode,
+      }))
 
-      const data = await response.json()
-      const user = data.user
-
-      // Pre-fill sender data from user info (only if not in edit mode)
-      if (!isEditMode) {
-        setFormData((prev) => ({
-          ...prev,
-          senderName: user.fullName,
-          senderPhone: user.phone,
-          senderCountry: user.country,
-          senderCity: user.city,
-          senderStreet: user.street,
-          senderPostalCode: user.postalCode,
-        }))
-
-        // Mark sender as completed since user data is pre-filled
-        setSenderCompleted(true)
-      }
-    } catch (error) {
-      console.error('Error loading user:', error)
-      // Redirect to login on error
-      window.location.href = '/login'
+      // Mark sender as completed since user data is pre-filled
+      setSenderCompleted(true)
     }
-  }
+  }, [user, isEditMode])
 
   const loadShipment = async () => {
     if (!shipmentId) return
@@ -535,9 +522,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
   }
 
 
-  // Effects - Load user and initial rules
+  // Effects - Load initial rules
   useEffect(() => {
-    loadUser()
     loadSenderRules()
 
     // Load shipment data if in edit or repeat mode

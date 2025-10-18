@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import type { CardRules, ServiceOption, ShipmentType } from '@/lib/types'
@@ -60,6 +60,12 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     pickupMethod: 'home',
   })
 
+  // Refs to track previous values and prevent redundant API calls
+  const prevSenderCountryRef = useRef<string>('')
+  const prevReceiverCountryRef = useRef<string>('')
+  const prevWeightRef = useRef<string>('')
+  const prevShipmentTypeRef = useRef<ShipmentType | null>(null)
+
   // Pre-fill user data when user is loaded from context
   useEffect(() => {
     if (!user) return
@@ -99,31 +105,36 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const shipment = data.shipment
 
       // Pre-fill all form fields with shipment data
-      // Let the rules system handle field configuration
+      // The API returns a nested structure (from/to/package/service/options)
       setFormData({
-        senderName: shipment.senderName || '',
-        senderPhone: shipment.senderPhone || '',
-        senderCountry: shipment.senderCountry || '',
-        senderCity: shipment.senderCity || '',
-        senderStreet: shipment.senderStreet || '',
-        senderPostalCode: shipment.senderPostalCode || '',
-        receiverName: shipment.receiverName || '',
-        receiverPhone: shipment.receiverPhone || '',
-        receiverCountry: shipment.receiverCountry || '',
-        receiverCity: shipment.receiverCity || '',
-        receiverStreet: shipment.receiverStreet || '',
-        receiverPostalCode: shipment.receiverPostalCode || '',
-        weight: shipment.weight?.toString() || '',
-        length: shipment.length?.toString() || '',
-        width: shipment.width?.toString() || '',
-        height: shipment.height?.toString() || '',
-        itemDescription: shipment.contentDescription || '',
-        serviceType: shipment.serviceType || '',
-        signatureRequired: shipment.signatureRequired || false,
-        containsLiquid: shipment.containsLiquid || false,
-        insurance: shipment.insurance || false,
-        packaging: shipment.packaging || false,
-        pickupMethod: shipment.pickupMethod || 'home',
+        // From (Sender)
+        senderName: shipment.from?.name || '',
+        senderPhone: shipment.from?.phone || '',
+        senderCountry: shipment.from?.country || '',
+        senderCity: shipment.from?.city || '',
+        senderStreet: shipment.from?.street || '',
+        senderPostalCode: shipment.from?.postalCode || '',
+        // To (Receiver)
+        receiverName: shipment.to?.name || '',
+        receiverPhone: shipment.to?.phone || '',
+        receiverCountry: shipment.to?.country || '',
+        receiverCity: shipment.to?.city || '',
+        receiverStreet: shipment.to?.street || '',
+        receiverPostalCode: shipment.to?.postalCode || '',
+        // Package
+        weight: shipment.package?.weight?.toString() || '',
+        length: shipment.package?.length?.toString() || '',
+        width: shipment.package?.width?.toString() || '',
+        height: shipment.package?.height?.toString() || '',
+        itemDescription: shipment.package?.description || '',
+        // Service
+        serviceType: shipment.service?.type || '',
+        pickupMethod: shipment.service?.pickupMethod || 'home',
+        // Options
+        signatureRequired: shipment.options?.signature || false,
+        containsLiquid: shipment.options?.liquid || false,
+        insurance: shipment.options?.insurance || false,
+        packaging: shipment.options?.packaging || false,
       })
 
       // The rules system and completion tracking will handle the rest
@@ -619,42 +630,68 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     formData.packaging,
   ])
 
-  // Reload sender rules when country changes
+  // Optimized: Smart reloading of rules when relevant data changes
   useEffect(() => {
-    if (formData.senderCountry) {
+    const senderCountryChanged = formData.senderCountry !== prevSenderCountryRef.current
+    const receiverCountryChanged = formData.receiverCountry !== prevReceiverCountryRef.current
+    const weightChanged = formData.weight !== prevWeightRef.current
+    const shipmentTypeChanged = shipmentType !== prevShipmentTypeRef.current
+
+    // Special case: In edit/repeat mode, load all rules when data is first populated
+    const isInitialLoad = prevSenderCountryRef.current === '' && formData.senderCountry !== ''
+    const inRepeatOrEditMode = isEditMode || repeatId
+
+    // Reload sender rules only if sender country changed
+    if (senderCountryChanged && formData.senderCountry) {
       loadSenderRules()
-      if (senderCompleted) loadReceiverRules()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.senderCountry])
 
-  // Reload receiver rules when country changes
-  useEffect(() => {
-    if (formData.receiverCountry) loadReceiverRules()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.receiverCountry])
-
-  // Reload package rules when countries change
-  useEffect(() => {
-    if (formData.senderCountry && formData.receiverCountry && receiverCompleted) {
-      loadPackageRules()
+    // Reload receiver rules if sender or receiver country changed
+    if ((senderCountryChanged || receiverCountryChanged) && (formData.senderCountry || formData.receiverCountry)) {
+      if (senderCompleted || formData.receiverCountry || (isInitialLoad && inRepeatOrEditMode)) {
+        loadReceiverRules()
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.senderCountry, formData.receiverCountry])
 
-  // Reload service rules when data changes
-  useEffect(() => {
-    if (packageCompleted && shipmentType && formData.weight) {
-      loadServiceRules()
+    // Reload package rules if countries changed
+    if ((senderCountryChanged || receiverCountryChanged)) {
+      if ((receiverCompleted && formData.senderCountry && formData.receiverCountry) ||
+          (isInitialLoad && inRepeatOrEditMode && formData.senderCountry && formData.receiverCountry)) {
+        loadPackageRules()
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.senderCountry, formData.receiverCountry, formData.weight, shipmentType])
 
-  // Reload additional options when data changes
-  useEffect(() => {
-    if (packageCompleted) loadAdditionalOptionsRules()
+    // Reload service rules if relevant data changed
+    if (shipmentType && formData.weight) {
+      if ((packageCompleted && (senderCountryChanged || receiverCountryChanged || weightChanged || shipmentTypeChanged)) ||
+          (isInitialLoad && inRepeatOrEditMode)) {
+        loadServiceRules()
+      }
+    }
+
+    // Reload additional options if relevant data changed
+    if (packageCompleted || (isInitialLoad && inRepeatOrEditMode)) {
+      if (senderCountryChanged || receiverCountryChanged || weightChanged || (isInitialLoad && inRepeatOrEditMode)) {
+        loadAdditionalOptionsRules()
+      }
+    }
+
+    // Update refs with current values
+    prevSenderCountryRef.current = formData.senderCountry
+    prevReceiverCountryRef.current = formData.receiverCountry
+    prevWeightRef.current = formData.weight
+    prevShipmentTypeRef.current = shipmentType
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.senderCountry, formData.receiverCountry, formData.weight])
+  }, [
+    formData.senderCountry,
+    formData.receiverCountry,
+    formData.weight,
+    shipmentType,
+    senderCompleted,
+    receiverCompleted,
+    packageCompleted,
+  ])
 
   // In edit or repeat mode, set the selected service when serviceRules loads
   useEffect(() => {

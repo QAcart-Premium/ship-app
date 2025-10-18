@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/auth'
 import { shipmentRepository } from '@/repositories'
+import { validateDraftShipment } from '@/lib/validators/shipment-validator'
 
 /**
  * POST /api/shipments/draft
  * Create or update a draft shipment
- * No validation required - allows saving incomplete shipments
+ * Minimal validation - allows saving incomplete/partial shipments
+ * Purpose: Save work-in-progress
  */
 export async function POST(request: NextRequest) {
   try {
@@ -49,7 +51,19 @@ export async function POST(request: NextRequest) {
       packaging: additional?.packaging || false,
     }
 
-    // Extract rates
+    // Minimal validation for drafts (only type checking)
+    const validation = validateDraftShipment(formData)
+    if (!validation.isValid) {
+      return NextResponse.json(
+        {
+          error: 'Invalid data format',
+          validationErrors: validation.errors,
+        },
+        { status: 400 }
+      )
+    }
+
+    // Extract rates (for drafts, we accept whatever the frontend sends)
     const rateData = {
       base: Number(rates?.base) || 0,
       insurance: Number(rates?.insurance) || 0,

@@ -21,7 +21,7 @@ export default function ShipmentsPage() {
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 })
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [shipmentToDelete, setShipmentToDelete] = useState<number | null>(null)
-  const [ setFinalizing] = useState(false)
+  const [_finalizing, setFinalizing] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   // Filters
@@ -112,7 +112,6 @@ export default function ShipmentsPage() {
   }
 
   const handleFinalizeClick = async (shipmentId: number) => {
-    // @ts-ignore
       setFinalizing(true)
     setOpenMenuId(null)
     try {
@@ -131,7 +130,6 @@ export default function ShipmentsPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to finalize shipment')
     } finally {
-      // @ts-ignore
         setFinalizing(false)
     }
   }

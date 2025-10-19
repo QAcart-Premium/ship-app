@@ -28,6 +28,7 @@ export default function ReceiverCard({
       onChange={onChange}
       onBlur={onBlur}
       disabled={disabled}
+      cardTitle="Receiver Information"
     />
   )
 }

@@ -31,6 +31,7 @@ export default function PackageCard({
       onBlur={onBlur}
       disabled={disabled}
       shipmentType={shipmentType || undefined}
+      cardTitle="Package Details"
     />
   )
 }

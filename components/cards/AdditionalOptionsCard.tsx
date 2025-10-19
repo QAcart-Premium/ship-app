@@ -1,5 +1,7 @@
 'use client'
 
+import { Settings } from 'lucide-react'
+
 interface AdditionalOptionsCardProps {
   rules: any
   formData: Record<string, any>
@@ -26,8 +28,17 @@ export default function AdditionalOptionsCard({
         disabled || !rules ? 'opacity-50' : ''
       }`}
     >
-      <h2 className="text-xl font-semibold mb-4">{rules?.title || 'Additional Options'}</h2>
-      <div className="space-y-3">
+      <div className="flex items-center gap-2 mb-4">
+        <Settings className="w-5 h-5 text-blue-600" />
+        <h2 className="text-xl font-semibold">{rules?.title || 'Additional Options'}</h2>
+      </div>
+
+      {!rules ? (
+        <p className="text-sm text-gray-400 text-center py-4">
+          {disabled ? 'Complete the previous section to unlock this card' : 'Loading options...'}
+        </p>
+      ) : (
+        <div className="space-y-3">
         {signatureField && (
           <div className="flex items-center">
             <input
@@ -148,7 +159,8 @@ export default function AdditionalOptionsCard({
             </div>
           </div>
         )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }

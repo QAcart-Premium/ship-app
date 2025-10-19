@@ -1,5 +1,6 @@
 'use client'
 
+import { DollarSign } from 'lucide-react'
 import { RateBreakdown } from '@/lib/types'
 
 interface RateCardProps {
@@ -16,10 +17,13 @@ export default function RateCard({
   return (
     <div
       className={`bg-white p-6 rounded-lg shadow ${
-        disabled ? 'opacity-50' : ''
+        disabled || calculatedPrice === null ? 'opacity-50' : ''
       }`}
     >
-      <h2 className="text-xl font-semibold mb-4">Rate</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <DollarSign className="w-5 h-5 text-blue-600" />
+        <h2 className="text-xl font-semibold">Rate</h2>
+      </div>
       <div className="space-y-4">
         <div className="flex justify-between items-center py-3 border-t border-b border-gray-200">
           <span className="text-lg font-medium text-gray-700">Total Price</span>
@@ -65,8 +69,8 @@ export default function RateCard({
         )}
 
         {calculatedPrice === null && (
-          <p className="text-sm text-gray-500 text-center py-4">
-            Select service to see pricing
+          <p className="text-sm text-gray-400 text-center py-4">
+            {disabled ? 'Complete the previous section to unlock this card' : 'Select a service to see pricing'}
           </p>
         )}
       </div>

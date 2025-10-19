@@ -28,6 +28,7 @@ export default function SenderCard({
       onChange={onChange}
       onBlur={onBlur}
       disabled={disabled}
+      cardTitle="Sender Information"
     />
   )
 }

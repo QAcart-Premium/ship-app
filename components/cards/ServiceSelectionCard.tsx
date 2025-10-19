@@ -1,5 +1,6 @@
 'use client'
 
+import { Truck } from 'lucide-react'
 import type { ServiceOption } from '@/lib/types'
 
 interface ServiceSelectionCardProps {
@@ -18,12 +19,19 @@ export default function ServiceSelectionCard({
   return (
     <div
       className={`bg-white p-6 rounded-lg shadow ${
-        disabled ? 'opacity-50' : ''
+        disabled || !serviceRules ? 'opacity-50' : ''
       }`}
     >
-      <h2 className="text-xl font-semibold mb-4">Service Selection</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <Truck className="w-5 h-5 text-blue-600" />
+        <h2 className="text-xl font-semibold">Service Selection</h2>
+      </div>
 
-      {serviceRules && (
+      {!serviceRules ? (
+        <p className="text-sm text-gray-400 text-center py-4">
+          {disabled ? 'Complete the previous section to unlock this card' : 'Loading services...'}
+        </p>
+      ) : (
         <div className="space-y-3">
           {serviceRules.services.map((service: ServiceOption) => (
             <button

@@ -65,6 +65,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
   const prevReceiverCountryRef = useRef<string>('')
   const prevWeightRef = useRef<string>('')
   const prevShipmentTypeRef = useRef<ShipmentType | null>(null)
+  const prevReceiverCompletedRef = useRef<boolean>(false)
+  const prevPackageCompletedRef = useRef<boolean>(false)
 
   // Pre-fill user data when user is loaded from context
   useEffect(() => {
@@ -149,7 +151,9 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const response = await fetch('/api/rules/sender', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify({
+          from: { country: formData.senderCountry },
+        }),
       })
       const rules = await response.json()
       setSenderRules(rules)
@@ -163,7 +167,10 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const response = await fetch('/api/rules/receiver', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify({
+          from: { country: formData.senderCountry },
+          to: { country: formData.receiverCountry },
+        }),
       })
       const rules = await response.json()
       setReceiverRules(rules)
@@ -191,7 +198,10 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const response = await fetch('/api/rules/package', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify({
+          from: { country: formData.senderCountry },
+          to: { country: formData.receiverCountry },
+        }),
       })
       const rules = await response.json()
       setPackageRules(rules)
@@ -206,7 +216,10 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const response = await fetch('/api/rules/service', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ shipmentType, formData }),
+        body: JSON.stringify({
+          shipmentType,
+          package: { weight: formData.weight },
+        }),
       })
       const rules = await response.json()
       setServiceRules(rules)
@@ -220,7 +233,11 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const response = await fetch('/api/rules/additional-options', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ formData }),
+        body: JSON.stringify({
+          from: { country: formData.senderCountry },
+          to: { country: formData.receiverCountry },
+          package: { weight: formData.weight },
+        }),
       })
       const rules = await response.json()
       setAdditionalOptionsRules(rules)
@@ -533,14 +550,14 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
   }
 
 
-  // Effects - Load initial rules
+  // Effects - Load shipment data in edit/repeat mode
   useEffect(() => {
-    loadSenderRules()
-
     // Load shipment data if in edit or repeat mode
     if (shipmentId && (isEditMode || repeatId)) {
       loadShipment()
     }
+    // Note: No need to call loadSenderRules() here, the optimized useEffect will handle it
+    // when formData is populated (either from user pre-fill or from loadShipment)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -564,12 +581,6 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, senderRules, senderCompleted])
 
-  // Load receiver rules when sender completes
-  useEffect(() => {
-    if (senderCompleted) loadReceiverRules()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [senderCompleted])
-
   // Check receiver completion
   useEffect(() => {
     if (receiverRules && senderCompleted) {
@@ -579,7 +590,7 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
 
       if (isComplete && !hasValidationErrors && !receiverCompleted) {
         setReceiverCompleted(true)
-        loadPackageRules()
+        // Note: loadPackageRules() removed - optimized useEffect will handle it
       } else if ((!isComplete || hasValidationErrors) && receiverCompleted) {
         setReceiverCompleted(false)
         setPackageCompleted(false)
@@ -597,8 +608,7 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       const isComplete = checkCardComplete(packageRules, formData) && checkPackageComplete()
       if (isComplete && !packageCompleted) {
         setPackageCompleted(true)
-        loadServiceRules()
-        loadAdditionalOptionsRules()
+        // Note: loadServiceRules() and loadAdditionalOptionsRules() removed - optimized useEffect will handle them
       } else if (!isComplete && packageCompleted) {
         setPackageCompleted(false)
         setServiceRules(null)
@@ -636,6 +646,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     const receiverCountryChanged = formData.receiverCountry !== prevReceiverCountryRef.current
     const weightChanged = formData.weight !== prevWeightRef.current
     const shipmentTypeChanged = shipmentType !== prevShipmentTypeRef.current
+    const receiverCompletedChanged = receiverCompleted !== prevReceiverCompletedRef.current
+    const packageCompletedChanged = packageCompleted !== prevPackageCompletedRef.current
 
     // Special case: In edit/repeat mode, load all rules when data is first populated
     const isInitialLoad = prevSenderCountryRef.current === '' && formData.senderCountry !== ''
@@ -653,25 +665,25 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       }
     }
 
-    // Reload package rules if countries changed
-    if ((senderCountryChanged || receiverCountryChanged)) {
+    // Reload package rules if countries changed OR when receiver becomes completed
+    if ((senderCountryChanged || receiverCountryChanged || receiverCompletedChanged)) {
       if ((receiverCompleted && formData.senderCountry && formData.receiverCountry) ||
           (isInitialLoad && inRepeatOrEditMode && formData.senderCountry && formData.receiverCountry)) {
         loadPackageRules()
       }
     }
 
-    // Reload service rules if relevant data changed
+    // Reload service rules if relevant data changed OR when package becomes completed
     if (shipmentType && formData.weight) {
-      if ((packageCompleted && (senderCountryChanged || receiverCountryChanged || weightChanged || shipmentTypeChanged)) ||
+      if ((packageCompleted && (senderCountryChanged || receiverCountryChanged || weightChanged || shipmentTypeChanged || packageCompletedChanged)) ||
           (isInitialLoad && inRepeatOrEditMode)) {
         loadServiceRules()
       }
     }
 
-    // Reload additional options if relevant data changed
+    // Reload additional options if relevant data changed OR when package becomes completed
     if (packageCompleted || (isInitialLoad && inRepeatOrEditMode)) {
-      if (senderCountryChanged || receiverCountryChanged || weightChanged || (isInitialLoad && inRepeatOrEditMode)) {
+      if (senderCountryChanged || receiverCountryChanged || weightChanged || packageCompletedChanged || (isInitialLoad && inRepeatOrEditMode)) {
         loadAdditionalOptionsRules()
       }
     }
@@ -681,6 +693,8 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
     prevReceiverCountryRef.current = formData.receiverCountry
     prevWeightRef.current = formData.weight
     prevShipmentTypeRef.current = shipmentType
+    prevReceiverCompletedRef.current = receiverCompleted
+    prevPackageCompletedRef.current = packageCompleted
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [

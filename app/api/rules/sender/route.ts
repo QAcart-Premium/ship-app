@@ -7,13 +7,13 @@ import countriesData from '@/lib/rules/countries.json'
  * Returns the rules for the sender card
  *
  * Request body:
- * - formData: The current form data to validate and adjust rules
+ * - from: { country: string }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { formData } = body
-    const senderCountry = formData?.senderCountry
+    const { from } = body
+    const senderCountry = from?.country
 
     // Load the sender card rules
     const rules = JSON.parse(JSON.stringify(senderCardRules))

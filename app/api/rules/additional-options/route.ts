@@ -6,15 +6,17 @@ import additionalOptionsRules from '@/lib/rules/additional-options.json'
  * Returns the rules for the additional options
  *
  * Request body:
- * - formData: The current form data to validate and adjust rules
+ * - from: { country: string }
+ * - to: { country: string }
+ * - package: { weight: number }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { formData } = body
-    const senderCountry = formData?.senderCountry
-    const receiverCountry = formData?.receiverCountry
-    const weight = formData?.weight ? parseFloat(formData.weight) : 0
+    const { from, to, package: pkg } = body
+    const senderCountry = from?.country
+    const receiverCountry = to?.country
+    const weight = pkg?.weight ? parseFloat(pkg.weight) : 0
 
     // Load the additional options rules
     const rules = JSON.parse(JSON.stringify(additionalOptionsRules))

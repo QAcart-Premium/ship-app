@@ -37,14 +37,15 @@ function determineShipmentType(
  * Returns the rules for the package card
  *
  * Request body:
- * - formData: The current form data to validate and adjust rules
+ * - from: { country: string }
+ * - to: { country: string }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { formData } = body
-    const senderCountry = formData?.senderCountry
-    const receiverCountry = formData?.receiverCountry
+    const { from, to } = body
+    const senderCountry = from?.country
+    const receiverCountry = to?.country
 
     // Validate required parameters
     if (!senderCountry || !receiverCountry) {

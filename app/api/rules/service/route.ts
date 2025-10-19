@@ -8,13 +8,13 @@ import type { ShipmentType } from '@/lib/types'
  *
  * Request body:
  * - shipmentType: (required) The detected shipment type (Domestic, IntraGulf, International)
- * - formData: The current form data (contains weight)
+ * - package: { weight: number }
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { shipmentType, formData } = body
-    const weight = formData?.weight
+    const { shipmentType, package: pkg } = body
+    const weight = pkg?.weight
 
     // Validate required parameters
     if (!shipmentType) {

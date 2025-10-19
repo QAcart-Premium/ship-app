@@ -29,9 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!response.ok) {
         setUser(null)
-        if (!isPublicRoute) {
-          router.push('/login')
-        }
         return
       }
 
@@ -40,9 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('Error fetching user:', error)
       setUser(null)
-      if (!isPublicRoute) {
-        router.push('/login')
-      }
     } finally {
       setLoading(false)
     }
@@ -62,9 +56,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await fetchUser()
   }
 
+  // Fetch user only once on mount
   useEffect(() => {
     fetchUser()
-  }, [pathname])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Handle redirects on route changes (without re-fetching)
+  useEffect(() => {
+    // Skip during initial load
+    if (loading) return
+
+    // Redirect to login if not authenticated and on protected route
+    if (!user && !isPublicRoute) {
+      router.push('/login')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, user, loading, isPublicRoute])
 
   return (
     <AuthContext.Provider value={{ user, loading, logout, refreshUser }}>

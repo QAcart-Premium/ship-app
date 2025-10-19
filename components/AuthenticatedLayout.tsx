@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
+import { t } from '@/lib/translations'
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
@@ -44,7 +45,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+        <div className="text-gray-500">{t('common.loading')}</div>
       </div>
     )
   }
@@ -61,7 +62,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
 
   const navItems = [
     {
-      name: 'Create Shipment',
+      name: t('nav.createShipment'),
       href: '/',
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,7 +71,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
       ),
     },
     {
-      name: 'My Shipments',
+      name: t('nav.myShipments'),
       href: '/shipments',
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -86,7 +87,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
       <aside className="w-64 bg-white shadow-lg flex flex-col">
         {/* Logo Section */}
         <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <svg
               className="h-8 w-8 text-blue-600"
               fill="none"
@@ -100,13 +101,13 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
               />
             </svg>
-            <span className="text-xl font-bold text-gray-900">ShipTest</span>
+            <span className="text-xl font-bold text-gray-900">شحناتي</span>
           </div>
         </div>
 
         {/* User Info */}
         <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 font-semibold text-sm">
                 {user.fullName.charAt(0).toUpperCase()}
@@ -127,7 +128,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-blue-50 text-blue-600 font-medium'
                     : 'text-gray-700 hover:bg-gray-100'
@@ -145,12 +146,12 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="w-full flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            <span>{loggingOut ? 'Logging out...' : 'Logout'}</span>
+            <span>{loggingOut ? t('common.loading') : t('nav.logout')}</span>
           </button>
         </div>
       </aside>

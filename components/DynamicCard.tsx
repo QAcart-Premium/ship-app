@@ -2,6 +2,7 @@
 
 import { User, Users, Package, CheckCircle } from 'lucide-react'
 import type { CardRules, FieldRule } from '@/lib/types'
+import { t } from '@/lib/translations'
 
 interface DynamicCardProps {
   rules: CardRules | null
@@ -200,7 +201,7 @@ export default function DynamicCard({
 
       {!rules ? (
         <p className="text-sm text-gray-400 text-center py-4">
-          {disabled ? 'Complete the previous section to unlock this card' : 'Loading card...'}
+          {disabled ? t('form.completePreviousSection') : t('form.loadingCard')}
         </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

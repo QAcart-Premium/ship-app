@@ -152,7 +152,7 @@ export default function ShipmentsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">Loading shipments...</div>
+        <div className="text-gray-500">جاري تحميل الشحنات...</div>
       </div>
     )
   }
@@ -163,21 +163,21 @@ export default function ShipmentsPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Shipments</h1>
-            <p className="mt-2 text-gray-600">View and manage all your shipments</p>
+            <h1 className="text-3xl font-bold text-gray-900">شحناتي</h1>
+            <p className="mt-2 text-gray-600">عرض وإدارة جميع شحناتك</p>
           </div>
           <Link
             href="/"
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
-            + Create Shipment
+            + إنشاء شحنة
           </Link>
         </div>
 
         {/* Success message */}
         {showSuccess && (
           <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded mb-6">
-            Shipment saved successfully!
+            تم حفظ الشحنة بنجاح!
           </div>
         )}
 

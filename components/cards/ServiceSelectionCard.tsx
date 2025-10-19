@@ -2,6 +2,7 @@
 
 import { Truck } from 'lucide-react'
 import type { ServiceOption } from '@/lib/types'
+import { t } from '@/lib/translations'
 
 interface ServiceSelectionCardProps {
   serviceRules: any
@@ -24,12 +25,12 @@ export default function ServiceSelectionCard({
     >
       <div className="flex items-center gap-2 mb-4">
         <Truck className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold">Service Selection</h2>
+        <h2 className="text-xl font-semibold">{t('form.serviceSelection')}</h2>
       </div>
 
       {!serviceRules ? (
         <p className="text-sm text-gray-400 text-center py-4">
-          {disabled ? 'Complete the previous section to unlock this card' : 'Loading services...'}
+          {disabled ? t('form.completePreviousSection') : t('form.loadingServices')}
         </p>
       ) : (
         <div className="space-y-3">
@@ -51,14 +52,14 @@ export default function ServiceSelectionCard({
                   {service.name}
                 </span>
                 <span className="text-sm text-gray-600">
-                  {service.deliveryDays} {service.deliveryDays === 1 ? 'day' : 'days'}
+                  {service.deliveryDays} {service.deliveryDays === 1 ? t('rate.day') : t('rate.days')}
                 </span>
               </div>
               <p className="text-sm text-gray-600 mb-2">
                 {service.description}
               </p>
               <div className="text-xs text-gray-500">
-                Base: ${service.basePrice} + ${service.pricePerKg}/kg
+                {t('rate.base')}: ${service.basePrice} + ${service.pricePerKg}/كجم
               </div>
             </button>
           ))}

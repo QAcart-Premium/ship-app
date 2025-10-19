@@ -35,7 +35,7 @@ export default function KebabMenu({
               onClick={onClose}
             >
               <Eye className="w-4 h-4" />
-              View
+              عرض
             </Link>
             <Link
               href={`/?edit=${shipmentId}`}
@@ -43,21 +43,21 @@ export default function KebabMenu({
               onClick={onClose}
             >
               <Edit className="w-4 h-4" />
-              Edit
+              تعديل
             </Link>
             <button
               onClick={() => onFinalize?.(shipmentId)}
               className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
             >
               <FileCheck className="w-4 h-4" />
-              Finalize
+              إتمام الشحنة
             </button>
             <button
               onClick={() => onDelete(shipmentId)}
               className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-              Delete
+              حذف
             </button>
           </>
         ) : (
@@ -68,7 +68,7 @@ export default function KebabMenu({
               onClick={onClose}
             >
               <Eye className="w-4 h-4" />
-              View
+              عرض
             </Link>
             <Link
               href={`/?repeat=${shipmentId}`}
@@ -76,14 +76,14 @@ export default function KebabMenu({
               onClick={onClose}
             >
               <Copy className="w-4 h-4" />
-              Repeat
+              تكرار
             </Link>
             <button
               onClick={() => onDelete(shipmentId)}
               className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
-              Delete
+              حذف
             </button>
           </>
         )}

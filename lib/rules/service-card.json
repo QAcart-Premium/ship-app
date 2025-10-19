@@ -3,8 +3,8 @@
     "Domestic": [
       {
         "id": "domestic_standard",
-        "name": "Domestic Standard Delivery",
-        "description": "Standard domestic delivery (2-3 business days)",
+        "name": "التوصيل المحلي القياسي",
+        "description": "التوصيل المحلي القياسي (2-3 أيام عمل)",
         "maxWeight": 50,
         "basePrice": 15,
         "pricePerKg": 0.5,
@@ -12,8 +12,8 @@
       },
       {
         "id": "domestic_express",
-        "name": "Domestic Express Delivery",
-        "description": "Express domestic delivery (1 business day)",
+        "name": "التوصيل المحلي السريع",
+        "description": "التوصيل المحلي السريع (يوم عمل واحد)",
         "maxWeight": 30,
         "basePrice": 30,
         "pricePerKg": 1,
@@ -23,8 +23,8 @@
     "IntraGulf": [
       {
         "id": "gulf_standard",
-        "name": "Gulf Standard Shipping",
-        "description": "Standard Gulf regional shipping (4-5 business days)",
+        "name": "الشحن الخليجي القياسي",
+        "description": "الشحن الخليجي القياسي (4-5 أيام عمل)",
         "maxWeight": 30,
         "basePrice": 25,
         "pricePerKg": 1.5,
@@ -32,8 +32,8 @@
       },
       {
         "id": "gulf_express",
-        "name": "Gulf Express Shipping",
-        "description": "Express Gulf regional shipping (2 business days)",
+        "name": "الشحن الخليجي السريع",
+        "description": "الشحن الخليجي السريع (يومان عمل)",
         "maxWeight": 20,
         "basePrice": 45,
         "pricePerKg": 2.5,
@@ -43,8 +43,8 @@
     "International": [
       {
         "id": "international_economy",
-        "name": "International Economy Shipping",
-        "description": "Economy international shipping (8-10 business days)",
+        "name": "الشحن الدولي الاقتصادي",
+        "description": "الشحن الدولي الاقتصادي (8-10 أيام عمل)",
         "maxWeight": 25,
         "basePrice": 35,
         "pricePerKg": 2,
@@ -52,8 +52,8 @@
       },
       {
         "id": "international_standard",
-        "name": "International Standard Shipping",
-        "description": "Standard international shipping (5-7 business days)",
+        "name": "الشحن الدولي القياسي",
+        "description": "الشحن الدولي القياسي (5-7 أيام عمل)",
         "maxWeight": 25,
         "basePrice": 50,
         "pricePerKg": 3,
@@ -62,6 +62,6 @@
     ]
   },
   "cardName": "service",
-  "title": "Service Information",
+  "title": "معلومات الخدمة",
   "enabled": false
 }

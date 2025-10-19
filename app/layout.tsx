@@ -4,9 +4,9 @@ import AuthenticatedLayout from '@/components/AuthenticatedLayout'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'ShipTest - Shipping Management for Testing Education',
+  title: 'شحناتي - نظام إدارة الشحن',
   description:
-    'A comprehensive shipping management application designed for teaching software testing concepts',
+    'تطبيق شامل لإدارة الشحن',
 }
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl">
       <body>
         <AuthProvider>
           <AuthenticatedLayout>{children}</AuthenticatedLayout>

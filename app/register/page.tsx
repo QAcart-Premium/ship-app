@@ -3,9 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { t } from '@/lib/translations'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function RegisterPage() {
   const router = useRouter()
+  const { refreshUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -35,7 +38,7 @@ export default function RegisterPage() {
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError('كلمات المرور غير متطابقة')
       return
     }
 
@@ -50,7 +53,7 @@ export default function RegisterPage() {
       !formData.street ||
       !formData.postalCode
     ) {
-      setError('All fields are required')
+      setError(t('errors.required'))
       return
     }
 
@@ -75,13 +78,14 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed')
+        throw new Error(data.error || t('errors.registerFailed'))
       }
 
-      // Success - redirect to home/form
+      // Success - refresh user context and redirect
+      await refreshUser()
       router.push('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError(err instanceof Error ? err.message : t('errors.registerFailed'))
     } finally {
       setLoading(false)
     }
@@ -92,12 +96,12 @@ export default function RegisterPage() {
       <div className="max-w-2xl w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create your account
+            {t('auth.registerTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Already have an account?{' '}
+            {t('auth.alreadyHaveAccount')}{' '}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-              Sign in
+              {t('auth.loginHere')}
             </Link>
           </p>
         </div>
@@ -111,11 +115,11 @@ export default function RegisterPage() {
 
           {/* Account Information */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Account Information</h3>
+            <h3 className="text-lg font-semibold mb-4">معلومات الحساب</h3>
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email Address *
+                  {t('auth.email')} *
                 </label>
                 <input
                   id="email"
@@ -125,14 +129,14 @@ export default function RegisterPage() {
                   value={formData.email}
                   onChange={handleChange}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="you@example.com"
+                  placeholder={t('placeholders.enterEmail')}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                    Password *
+                    {t('auth.password')} *
                   </label>
                   <input
                     id="password"
@@ -142,7 +146,7 @@ export default function RegisterPage() {
                     value={formData.password}
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Min 6 characters"
+                    placeholder={t('placeholders.enterPassword')}
                   />
                 </div>
 
@@ -151,7 +155,7 @@ export default function RegisterPage() {
                     htmlFor="confirmPassword"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Confirm Password *
+                    تأكيد كلمة المرور *
                   </label>
                   <input
                     id="confirmPassword"
@@ -161,7 +165,7 @@ export default function RegisterPage() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Re-enter password"
+                    placeholder="أعد إدخال كلمة المرور"
                   />
                 </div>
               </div>
@@ -170,14 +174,14 @@ export default function RegisterPage() {
 
           {/* Personal Information */}
           <div className="bg-white p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
+            <h3 className="text-lg font-semibold mb-4">المعلومات الشخصية</h3>
             <p className="text-sm text-gray-600 mb-4">
-              This information will be used as your default sender details
+              سيتم استخدام هذه المعلومات كبيانات المرسل الافتراضية
             </p>
             <div className="space-y-4">
               <div>
                 <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">
-                  Full Name *
+                  {t('auth.fullName')} *
                 </label>
                 <input
                   id="fullName"
@@ -187,14 +191,14 @@ export default function RegisterPage() {
                   value={formData.fullName}
                   onChange={handleChange}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="John Doe"
+                  placeholder={t('placeholders.enterName')}
                 />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                    Phone Number *
+                    {t('auth.phone')} *
                   </label>
                   <input
                     id="phone"
@@ -204,13 +208,13 @@ export default function RegisterPage() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+1234567890"
+                    placeholder={t('placeholders.enterPhone')}
                   />
                 </div>
 
                 <div>
                   <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-                    Country *
+                    {t('auth.country')} *
                   </label>
                   <select
                     id="country"
@@ -220,7 +224,7 @@ export default function RegisterPage() {
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">Select country...</option>
+                    <option value="">{t('placeholders.selectCountry')}</option>
                     <option value="Saudi Arabia">Saudi Arabia</option>
                     <option value="United Arab Emirates">United Arab Emirates</option>
                     <option value="Kuwait">Kuwait</option>
@@ -238,7 +242,7 @@ export default function RegisterPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-                    City *
+                    {t('auth.city')} *
                   </label>
                   <input
                     id="city"
@@ -248,13 +252,13 @@ export default function RegisterPage() {
                     value={formData.city}
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="City name"
+                    placeholder={t('placeholders.enterCity')}
                   />
                 </div>
 
                 <div>
                   <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">
-                    Postal Code *
+                    {t('auth.postalCode')} *
                   </label>
                   <input
                     id="postalCode"
@@ -264,14 +268,14 @@ export default function RegisterPage() {
                     value={formData.postalCode}
                     onChange={handleChange}
                     className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="12345"
+                    placeholder={t('placeholders.enterPostalCode')}
                   />
                 </div>
               </div>
 
               <div>
                 <label htmlFor="street" className="block text-sm font-medium text-gray-700">
-                  Street Address *
+                  {t('auth.street')} *
                 </label>
                 <input
                   id="street"
@@ -281,7 +285,7 @@ export default function RegisterPage() {
                   value={formData.street}
                   onChange={handleChange}
                   className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="123 Main St"
+                  placeholder={t('placeholders.enterStreet')}
                 />
               </div>
             </div>
@@ -293,7 +297,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? t('common.loading') : t('auth.register')}
             </button>
           </div>
         </form>

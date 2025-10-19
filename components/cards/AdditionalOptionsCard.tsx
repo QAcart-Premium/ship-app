@@ -1,6 +1,7 @@
 'use client'
 
 import { Settings } from 'lucide-react'
+import { t } from '@/lib/translations'
 
 interface AdditionalOptionsCardProps {
   rules: any
@@ -30,12 +31,12 @@ export default function AdditionalOptionsCard({
     >
       <div className="flex items-center gap-2 mb-4">
         <Settings className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold">{rules?.title || 'Additional Options'}</h2>
+        <h2 className="text-xl font-semibold">{rules?.title || t('form.additionalOptions')}</h2>
       </div>
 
       {!rules ? (
         <p className="text-sm text-gray-400 text-center py-4">
-          {disabled ? 'Complete the previous section to unlock this card' : 'Loading options...'}
+          {disabled ? t('form.completePreviousSection') : t('form.loadingOptions')}
         </p>
       ) : (
         <div className="space-y-3">

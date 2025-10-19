@@ -1,43 +1,43 @@
 {
   "cardName": "additionalOptions",
-  "title": "Additional Options",
+  "title": "خيارات إضافية",
   "enabled": false,
   "fields": {
     "signatureRequired": {
       "type": "checkbox",
-      "label": "Signature Required",
+      "label": "التوقيع مطلوب",
       "checked": false,
       "disabled": false
     },
     "containsLiquid": {
       "type": "checkbox",
-      "label": "Contains Liquid",
+      "label": "يحتوي على سوائل",
       "checked": false,
       "disabled": false
     },
     "insurance": {
       "type": "checkbox",
-      "label": "Insurance ($15.00)",
+      "label": "التأمين ($15.00)",
       "checked": false,
       "disabled": false
     },
     "packaging": {
       "type": "checkbox",
-      "label": "Professional Packaging ($8.00)",
+      "label": "التغليف الاحترافي ($8.00)",
       "checked": false,
       "disabled": false
     },
     "pickupMethod": {
       "type": "radio",
-      "label": "Pickup Method",
+      "label": "طريقة الاستلام",
       "options": [
         {
           "value": "home",
-          "label": "Pickup from Home"
+          "label": "الاستلام من المنزل"
         },
         {
           "value": "postal_office",
-          "label": "Drop off at Postal Office"
+          "label": "التوصيل إلى مكتب البريد"
         }
       ],
       "defaultValue": "home",

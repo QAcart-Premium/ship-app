@@ -14,68 +14,68 @@
     }
   },
   "cardName": "package",
-  "title": "Package Information",
+  "title": "معلومات الطرد",
   "enabled": false,
   "fields": {
     "weight": {
       "type": "number",
-      "label": "Weight (kg)",
+      "label": "الوزن (كجم)",
       "required": true,
       "validation": {
         "required": true,
         "min": 0.1,
-        "errorMessage": "Weight must be greater than 0"
+        "errorMessage": "يجب أن يكون الوزن أكبر من 0"
       },
-      "placeholder": "Enter weight in kg"
+      "placeholder": "أدخل الوزن بالكيلوجرام"
     },
     "length": {
       "type": "number",
-      "label": "Length (cm)",
+      "label": "الطول (سم)",
       "required": true,
       "validation": {
         "required": true,
         "min": 1,
         "max": 200,
-        "errorMessage": "Length must be between 1-200 cm"
+        "errorMessage": "يجب أن يكون الطول بين 1-200 سم"
       },
-      "placeholder": "Enter length"
+      "placeholder": "أدخل الطول"
     },
     "width": {
       "type": "number",
-      "label": "Width (cm)",
+      "label": "العرض (سم)",
       "required": true,
       "validation": {
         "required": true,
         "min": 1,
         "max": 200,
-        "errorMessage": "Width must be between 1-200 cm"
+        "errorMessage": "يجب أن يكون العرض بين 1-200 سم"
       },
-      "placeholder": "Enter width"
+      "placeholder": "أدخل العرض"
     },
     "height": {
       "type": "number",
-      "label": "Height (cm)",
+      "label": "الارتفاع (سم)",
       "required": true,
       "validation": {
         "required": true,
         "min": 1,
         "max": 200,
-        "errorMessage": "Height must be between 1-200 cm"
+        "errorMessage": "يجب أن يكون الارتفاع بين 1-200 سم"
       },
-      "placeholder": "Enter height"
+      "placeholder": "أدخل الارتفاع"
     },
     "itemDescription": {
       "type": "text",
-      "label": "Item Description",
+      "label": "وصف المحتويات",
       "required": false,
       "visible": false,
       "validation": {
         "required": false,
         "minLength": 5,
         "maxLength": 200,
-        "errorMessage": "Item description is required when shipping from non-Gulf to Gulf countries"
+        "errorMessage": "وصف المحتويات مطلوب عند الشحن من خارج دول الخليج إلى دول الخليج"
       },
-      "placeholder": "Describe the item contents"
+      "placeholder": "صِف محتويات الطرد"
     }
   }
 }

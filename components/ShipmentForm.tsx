@@ -8,6 +8,7 @@ import ServiceSelectionCard from './cards/ServiceSelectionCard'
 import AdditionalOptionsCard from './cards/AdditionalOptionsCard'
 import RateCard from './cards/RateCard'
 import { useShipmentForm } from '@/hooks/useShipmentForm'
+import { t } from '@/lib/translations'
 
 interface ShipmentFormProps {
   editId?: string | null
@@ -118,7 +119,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
       </div>
 
       {/* Submit Buttons */}
-      <div className="flex justify-end space-x-4">
+      <div className="flex justify-end gap-4">
         <button
           type="button"
           onClick={(e) => handleSubmit(e, true)}
@@ -127,7 +128,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
           className="flex items-center gap-2 px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-400 transition-colors"
         >
           <Save className="w-4 h-4" />
-          {loading ? 'Saving...' : (isEditMode ? 'Save' : 'Save as Draft')}
+          {loading ? t('form.saving') : (isEditMode ? t('common.save') : t('form.saveDraft'))}
         </button>
         <button
           type="submit"
@@ -137,7 +138,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
           className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
         >
           <CheckCircle className="w-4 h-4" />
-          {loading ? 'Finalizing...' : 'Finalize Shipment'}
+          {loading ? t('form.finalizing') : t('form.finalizeShipment')}
         </button>
       </div>
     </form>

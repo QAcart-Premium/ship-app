@@ -24,25 +24,25 @@ export default function DeleteModal({
               <Trash2 className="w-6 h-6 text-red-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">Delete Shipment</h3>
-              <p className="text-sm text-gray-500">Shipment #{shipmentId}</p>
+              <h3 className="text-lg font-semibold text-gray-900">حذف الشحنة</h3>
+              <p className="text-sm text-gray-500">شحنة رقم #{shipmentId}</p>
             </div>
           </div>
           <p className="text-gray-600 mb-6">
-            Are you sure you want to delete this shipment? This action cannot be undone.
+            هل أنت متأكد من رغبتك في حذف هذه الشحنة؟ لا يمكن التراجع عن هذا الإجراء.
           </p>
           <div className="flex gap-3 justify-end">
             <button
               onClick={onCancel}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
             >
-              Cancel
+              إلغاء
             </button>
             <button
               onClick={onConfirm}
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition-colors"
             >
-              Delete
+              حذف
             </button>
           </div>
         </div>

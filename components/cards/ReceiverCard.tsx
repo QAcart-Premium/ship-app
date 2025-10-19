@@ -2,6 +2,7 @@
 
 import DynamicCard from '../DynamicCard'
 import type { CardRules } from '@/lib/types'
+import { t } from '@/lib/translations'
 
 interface ReceiverCardProps {
   rules: CardRules | null
@@ -28,7 +29,7 @@ export default function ReceiverCard({
       onChange={onChange}
       onBlur={onBlur}
       disabled={disabled}
-      cardTitle="Receiver Information"
+      cardTitle={t('form.receiverInformation')}
     />
   )
 }

@@ -14,14 +14,14 @@ export default function HomePage() {
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="page-title">
-          {isEditMode ? 'Edit Shipment' : isRepeatMode ? 'Repeat Shipment' : 'Create New Shipment'}
+          {isEditMode ? 'تعديل الشحنة' : isRepeatMode ? 'تكرار الشحنة' : 'إنشاء شحنة جديدة'}
         </h1>
         <p className="text-gray-600">
           {isEditMode
-            ? 'Update the shipment details below'
+            ? 'قم بتحديث تفاصيل الشحنة أدناه'
             : isRepeatMode
-            ? 'Review and modify the shipment details below'
-            : 'Fill in the shipment details below'}
+            ? 'راجع وعدّل تفاصيل الشحنة أدناه'
+            : 'املأ تفاصيل الشحنة أدناه'}
         </p>
       </div>
       <ShipmentForm editId={editId} repeatId={repeatId} />

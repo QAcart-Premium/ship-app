@@ -3,9 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { t } from '@/lib/translations'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { refreshUser } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -25,7 +28,7 @@ export default function LoginPage() {
     setError(null)
 
     if (!formData.email || !formData.password) {
-      setError('Email and password are required')
+      setError(t('errors.required'))
       return
     }
 
@@ -41,13 +44,14 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+        throw new Error(data.error || t('errors.loginFailed'))
       }
 
-      // Success - redirect to home/form
+      // Success - refresh user context and redirect
+      await refreshUser()
       router.push('/')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : t('errors.loginFailed'))
     } finally {
       setLoading(false)
     }
@@ -58,12 +62,12 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            {t('auth.loginTitle')}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Don't have an account?{' '}
+            {t('auth.dontHaveAccount')}{' '}
             <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-              Create one now
+              {t('auth.registerHere')}
             </Link>
           </p>
         </div>
@@ -78,7 +82,7 @@ export default function LoginPage() {
           <div className="bg-white p-6 rounded-lg shadow space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
+                {t('auth.email')}
               </label>
               <input
                 id="email"
@@ -88,13 +92,13 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="you@example.com"
+                placeholder={t('placeholders.enterEmail')}
               />
             </div>
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+                {t('auth.password')}
               </label>
               <input
                 id="password"
@@ -104,7 +108,7 @@ export default function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
                 className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your password"
+                placeholder={t('placeholders.enterPassword')}
               />
             </div>
           </div>
@@ -115,7 +119,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? t('common.loading') : t('auth.login')}
             </button>
           </div>
         </form>

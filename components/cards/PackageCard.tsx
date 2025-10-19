@@ -2,6 +2,7 @@
 
 import DynamicCard from '../DynamicCard'
 import type { ShipmentType } from '@/lib/types'
+import { t } from '@/lib/translations'
 
 interface PackageCardProps {
   rules: any
@@ -31,7 +32,7 @@ export default function PackageCard({
       onBlur={onBlur}
       disabled={disabled}
       shipmentType={shipmentType || undefined}
-      cardTitle="Package Details"
+      cardTitle={t('form.packageDetails')}
     />
   )
 }

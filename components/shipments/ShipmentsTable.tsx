@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { MoreVertical } from 'lucide-react'
 import type { Shipment } from '@/lib/types'
+import { t } from '@/lib/translations'
 
 interface ShipmentsTableProps {
   shipments: Shipment[]
@@ -12,14 +13,14 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
     if (status === 'draft') {
       return (
         <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
-          DRAFT
+          {t('status.Draft')}
         </span>
       )
     }
     // All non-draft statuses are considered "finalized"
     return (
       <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-        FINALIZED
+        مُكتمل
       </span>
     )
   }
@@ -40,16 +41,16 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No shipments</h3>
+        <h3 className="mt-2 text-sm font-medium text-gray-900">{t('table.noShipments')}</h3>
         <p className="mt-1 text-sm text-gray-500">
-          Get started by creating a new shipment.
+          {t('table.createFirstShipment')}
         </p>
         <div className="mt-6">
           <Link
             href="/"
             className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
           >
-            + New Shipment
+            + {t('table.createShipment')}
           </Link>
         </div>
       </div>
@@ -61,32 +62,32 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Tracking Number
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {t('table.trackingNumber')}
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Sender
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              المرسل
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Receiver
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              المستلم
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Destination
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              الوجهة
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Type
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              النوع
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Status
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              {t('table.status')}
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {shipments.map((shipment) => (
             <tr key={shipment.id} className="hover:bg-gray-50">
-              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">
+              <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-right">
                 <button
                   onClick={(e) => onMenuClick(shipment.id, e)}
                   className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
@@ -94,22 +95,22 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
                   <MoreVertical className="w-5 h-5" />
                 </button>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
                 {shipment.status === 'draft' ? '-' : shipment.trackingNumber}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                 {shipment.from.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
                 {shipment.to.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
                 {shipment.to.city}, {shipment.to.country}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {shipment.service.shipmentType}
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+                {t(`shipmentTypes.${shipment.service.shipmentType}`)}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
+              <td className="px-6 py-4 whitespace-nowrap text-right">
                 {getStatusBadge(shipment.status)}
               </td>
             </tr>

@@ -25,7 +25,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      // Add timeout to prevent infinite loading on cold start
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
+
+      const response = await fetch('/api/auth/me', {
+        signal: controller.signal,
+      })
+      clearTimeout(timeoutId)
 
       if (!response.ok) {
         setUser(null)
@@ -35,7 +42,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const data = await response.json()
       setUser(data.user)
     } catch (error) {
-      console.error('Error fetching user:', error)
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.error('Auth fetch timed out - possible cold start issue')
+      } else {
+        console.error('Error fetching user:', error)
+      }
       setUser(null)
     } finally {
       setLoading(false)

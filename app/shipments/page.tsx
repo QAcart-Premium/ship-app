@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import StatsCards from '@/components/shipments/StatsCards'
@@ -10,7 +10,7 @@ import KebabMenu from '@/components/shipments/KebabMenu'
 import DeleteModal from '@/components/shipments/DeleteModal'
 import type { Shipment } from '@/lib/types'
 
-export default function ShipmentsPage() {
+function ShipmentsPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [shipments, setShipments] = useState<Shipment[]>([])
@@ -235,5 +235,19 @@ export default function ShipmentsPage() {
         }}
       />
     </div>
+  )
+}
+
+export default function ShipmentsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center py-12">
+          <div className="text-gray-500">جاري تحميل الشحنات...</div>
+        </div>
+      }
+    >
+      <ShipmentsPageContent />
+    </Suspense>
   )
 }

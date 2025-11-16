@@ -1,9 +1,11 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import ShipmentForm from '@/components/ShipmentForm'
+import { t } from '@/lib/translations'
 
-export default function HomePage() {
+function HomePageContent() {
   const searchParams = useSearchParams()
   const editId = searchParams.get('edit')
   const repeatId = searchParams.get('repeat')
@@ -26,5 +28,19 @@ export default function HomePage() {
       </div>
       <ShipmentForm editId={editId} repeatId={repeatId} />
     </div>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-gray-500">{t('common.loading')}</div>
+        </div>
+      }
+    >
+      <HomePageContent />
+    </Suspense>
   )
 }

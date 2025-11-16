@@ -13,3 +13,9 @@ export const prisma =
   })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+
+// Warm up Prisma connection on first import to avoid cold start delays
+// This runs a simple query to establish the database connection early
+prisma.$connect().catch((error) => {
+  console.error('Failed to connect to database:', error)
+})

@@ -44,7 +44,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
       {/* General error message */}
       {errors.general && (
         <div
-          className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-8"
+          className="bg-nord-aurora-red/20 border border-destructive text-destructive px-4 py-3 rounded mb-8"
           data-testid="error-message"
         >
           {errors.general}
@@ -54,7 +54,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
       {/* Payment error message */}
       {errors.payment && (
         <div
-          className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded mb-8"
+          className="bg-nord-aurora-red/20 border border-destructive text-destructive px-4 py-3 rounded mb-8"
           data-testid="payment-error-message"
         >
           {errors.payment}
@@ -125,7 +125,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
           onClick={(e) => handleSubmit(e, true)}
           disabled={loading || !packageCompleted}
           data-testid="save-draft-button"
-          className="flex items-center gap-2 px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-400 transition-colors"
+          className="flex items-center gap-2 px-6 py-2 border border-primary text-primary rounded-md hover:bg-nord-frost-1/20 disabled:bg-nord-polar-3 disabled:text-muted-foreground/50 disabled:cursor-not-allowed disabled:border-border transition-colors"
         >
           <Save className="w-4 h-4" />
           {loading ? t('form.saving') : (isEditMode ? t('common.save') : t('form.saveDraft'))}
@@ -135,7 +135,7 @@ export default function ShipmentForm({ editId, repeatId }: ShipmentFormProps) {
           onClick={(e) => handleSubmit(e, false)}
           disabled={loading || !selectedService || !calculatedPrice}
           data-testid="finalize-button"
-          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-2 px-6 py-2 bg-primary text-nord-polar-0 rounded-md hover:bg-nord-frost-3 disabled:bg-nord-polar-3 disabled:cursor-not-allowed transition-colors"
         >
           <CheckCircle className="w-4 h-4" />
           {loading ? t('form.finalizing') : t('form.finalizeShipment')}

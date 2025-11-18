@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Base Colors - Nord/Coding Theme */
+  --background: #323846;     /* Dark gray-blue background */
+  --foreground: #D8DEE9;     /* Snow white text */
+  --muted: #2E3440;          /* Darker secondary background */
+  --muted-foreground: #81A1C1; /* Muted frost blue-gray */
+  --border: #4C566A;         /* Polar night border */
+
+  /* Brand & Action Colors - Nord Palette */
+  --primary: #88C0D0;        /* Frost blue - primary actions */
+  --secondary: #81A1C1;      /* Frost blue-gray */
+  --accent-orange: #D08770;  /* Aurora orange */
+  --accent-purple: #B48EAD;  /* Aurora purple */
+  --premium: #A3BE8C;        /* Aurora green - success/premium */
+  --destructive: #BF616A;    /* Aurora red - danger */
+
+  /* Extras */
+  --radius: 0.25rem;         /* Sharp border radius for coding theme */
+  --font-arabic: 'IBM Plex Sans Arabic', 'Noto Sans Arabic', sans-serif;
+  --font-cairo: 'Cairo', sans-serif;
+  --font-headers: 'Oswald', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
 body {
-  @apply bg-gray-50 text-gray-900;
+  @apply bg-background text-foreground;
 }

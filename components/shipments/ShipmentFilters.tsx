@@ -12,16 +12,16 @@ export default function ShipmentFilters({
   onTypeChange,
 }: ShipmentFiltersProps) {
   return (
-    <div className="bg-white p-4 rounded-lg shadow mb-6">
+    <div className="bg-muted p-4 rounded-lg shadow border border-border mb-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted-foreground mb-1">
             الحالة
           </label>
           <select
             value={statusFilter}
             onChange={(e) => onStatusChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
           >
             <option value="all">جميع الحالات</option>
             <option value="draft">مسودة</option>
@@ -30,13 +30,13 @@ export default function ShipmentFilters({
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-muted-foreground mb-1">
             النوع
           </label>
           <select
             value={typeFilter}
             onChange={(e) => onTypeChange(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
           >
             <option value="all">جميع الأنواع</option>
             <option value="Domestic">محلي</option>

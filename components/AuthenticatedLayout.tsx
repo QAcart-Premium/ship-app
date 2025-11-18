@@ -44,8 +44,8 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   // Show loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">{t('common.loading')}</div>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-muted-foreground">{t('common.loading')}</div>
       </div>
     )
   }
@@ -82,14 +82,14 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   ]
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-background">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg flex flex-col">
+      <aside className="w-64 bg-muted shadow-lg flex flex-col border-l border-border">
         {/* Logo Section */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center gap-2">
             <svg
-              className="h-8 w-8 text-blue-600"
+              className="h-8 w-8 text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -101,21 +101,21 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
                 d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
               />
             </svg>
-            <span className="text-xl font-bold text-gray-900">شحناتي</span>
+            <span className="text-xl font-bold text-foreground">شحناتي</span>
           </div>
         </div>
 
         {/* User Info */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 font-semibold text-sm">
+            <div className="w-10 h-10 bg-nord-frost-1/20 rounded-full flex items-center justify-center">
+              <span className="text-primary font-semibold text-sm">
                 {user.fullName.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">{user.fullName}</p>
-              <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              <p className="text-sm font-medium text-foreground truncate">{user.fullName}</p>
+              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
         </div>
@@ -130,8 +130,8 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                   isActive
-                    ? 'bg-blue-50 text-blue-600 font-medium'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? 'bg-nord-frost-1/20 text-primary font-medium'
+                    : 'text-muted-foreground hover:bg-nord-polar-2'
                 }`}
               >
                 {item.icon}
@@ -142,11 +142,11 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
         </nav>
 
         {/* Logout Button */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-border">
           <button
             onClick={handleLogout}
             disabled={loggingOut}
-            className="w-full flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center gap-3 px-4 py-3 text-muted-foreground hover:bg-nord-polar-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

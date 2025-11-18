@@ -100,14 +100,14 @@ export default function ShipmentDetailPage() {
   const getStatusBadge = (status: string) => {
     if (status === 'draft') {
       return (
-        <span className="px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-800">
+        <span className="px-3 py-1 text-sm font-medium rounded-full bg-nord-polar-2 text-foreground">
           مسودة
         </span>
       )
     }
     // All non-draft statuses are "finalized"
     return (
-      <span className="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+      <span className="px-3 py-1 text-sm font-medium rounded-full bg-nord-aurora-green/20 text-premium">
         مُكتمل
       </span>
     )
@@ -116,7 +116,7 @@ export default function ShipmentDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">جاري تحميل الشحنة...</div>
+        <div className="text-muted-foreground">جاري تحميل الشحنة...</div>
       </div>
     )
   }
@@ -129,7 +129,7 @@ export default function ShipmentDetailPage() {
         </div>
         <Link
           href="/shipments"
-          className="text-blue-600 hover:text-blue-800"
+          className="text-primary hover:text-blue-800"
         >
           → العودة إلى الشحنات
         </Link>
@@ -143,17 +143,17 @@ export default function ShipmentDetailPage() {
       <div className="mb-8">
         <Link
           href="/shipments"
-          className="text-blue-600 hover:text-blue-800 text-sm mb-4 inline-block"
+          className="text-primary hover:text-blue-800 text-sm mb-4 inline-block"
         >
           → العودة إلى الشحنات
         </Link>
 
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-foreground">
               {shipment.status === 'draft' ? `مسودة شحنة #${shipment.id}` : shipment.trackingNumber}
             </h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-muted-foreground">
               تم الإنشاء في {new Date(shipment.createdAt).toLocaleDateString('ar-SA')}
             </p>
           </div>
@@ -163,7 +163,7 @@ export default function ShipmentDetailPage() {
               <>
                 <Link
                   href={`/?edit=${shipment.id}`}
-                  className="flex items-center gap-2 px-6 py-2 border border-gray-600 text-gray-600 rounded-md hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-2 px-6 py-2 border border-gray-600 text-muted-foreground rounded-md hover:bg-background transition-colors"
                 >
                   <Edit className="w-4 h-4" />
                   تعديل
@@ -171,7 +171,7 @@ export default function ShipmentDetailPage() {
                 <button
                   onClick={handleFinalize}
                   disabled={finalizing}
-                  className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  className="px-6 py-2 bg-primary text-nord-polar-0 rounded-md hover:bg-nord-frost-3 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   {finalizing ? 'جاري الإتمام...' : 'إتمام الشحنة'}
                 </button>
@@ -187,7 +187,7 @@ export default function ShipmentDetailPage() {
               <>
                 <button
                   onClick={handleRepeat}
-                  className="flex items-center gap-2 px-6 py-2 border border-blue-600 text-blue-600 rounded-md hover:bg-blue-50 transition-colors"
+                  className="flex items-center gap-2 px-6 py-2 border border-blue-600 text-primary rounded-md hover:bg-blue-50 transition-colors"
                 >
                   <Copy className="w-4 h-4" />
                   تكرار
@@ -207,20 +207,20 @@ export default function ShipmentDetailPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Sender Information */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">معلومات المرسل</h2>
+        <div className="bg-muted p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">معلومات المرسل</h2>
           <div className="space-y-3">
             <div>
-              <div className="text-sm text-gray-500">الاسم</div>
-              <div className="font-medium text-gray-900">{shipment.from.name}</div>
+              <div className="text-sm text-muted-foreground">الاسم</div>
+              <div className="font-medium text-foreground">{shipment.from.name}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">الهاتف</div>
-              <div className="font-medium text-gray-900">{shipment.from.phone}</div>
+              <div className="text-sm text-muted-foreground">الهاتف</div>
+              <div className="font-medium text-foreground">{shipment.from.phone}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">العنوان</div>
-              <div className="font-medium text-gray-900">
+              <div className="text-sm text-muted-foreground">العنوان</div>
+              <div className="font-medium text-foreground">
                 {shipment.from.street}<br />
                 {shipment.from.city}, {shipment.from.postalCode}<br />
                 {shipment.from.country}
@@ -230,20 +230,20 @@ export default function ShipmentDetailPage() {
         </div>
 
         {/* Receiver Information */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">معلومات المستلم</h2>
+        <div className="bg-muted p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">معلومات المستلم</h2>
           <div className="space-y-3">
             <div>
-              <div className="text-sm text-gray-500">الاسم</div>
-              <div className="font-medium text-gray-900">{shipment.to.name}</div>
+              <div className="text-sm text-muted-foreground">الاسم</div>
+              <div className="font-medium text-foreground">{shipment.to.name}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">الهاتف</div>
-              <div className="font-medium text-gray-900">{shipment.to.phone}</div>
+              <div className="text-sm text-muted-foreground">الهاتف</div>
+              <div className="font-medium text-foreground">{shipment.to.phone}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">العنوان</div>
-              <div className="font-medium text-gray-900">
+              <div className="text-sm text-muted-foreground">العنوان</div>
+              <div className="font-medium text-foreground">
                 {shipment.to.street}<br />
                 {shipment.to.city}, {shipment.to.postalCode}<br />
                 {shipment.to.country}
@@ -253,46 +253,46 @@ export default function ShipmentDetailPage() {
         </div>
 
         {/* Package Details */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">تفاصيل الطرد</h2>
+        <div className="bg-muted p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">تفاصيل الطرد</h2>
           <div className="space-y-3">
             <div>
-              <div className="text-sm text-gray-500">نوع الشحنة</div>
-              <div className="font-medium text-gray-900">{shipment.service.shipmentType}</div>
+              <div className="text-sm text-muted-foreground">نوع الشحنة</div>
+              <div className="font-medium text-foreground">{shipment.service.shipmentType}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">الوزن</div>
-              <div className="font-medium text-gray-900">{shipment.package.weight} كجم</div>
+              <div className="text-sm text-muted-foreground">الوزن</div>
+              <div className="font-medium text-foreground">{shipment.package.weight} كجم</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">الأبعاد (طول × عرض × ارتفاع)</div>
-              <div className="font-medium text-gray-900">
+              <div className="text-sm text-muted-foreground">الأبعاد (طول × عرض × ارتفاع)</div>
+              <div className="font-medium text-foreground">
                 {shipment.package.length} × {shipment.package.width} × {shipment.package.height} سم
               </div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">وصف المحتويات</div>
-              <div className="font-medium text-gray-900">{shipment.package.description}</div>
+              <div className="text-sm text-muted-foreground">وصف المحتويات</div>
+              <div className="font-medium text-foreground">{shipment.package.description}</div>
             </div>
           </div>
         </div>
 
         {/* Service & Options */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-900">الخدمة والخيارات</h2>
+        <div className="bg-muted p-6 rounded-lg shadow">
+          <h2 className="text-lg font-semibold mb-4 text-foreground">الخدمة والخيارات</h2>
           <div className="space-y-3">
             <div>
-              <div className="text-sm text-gray-500">نوع الخدمة</div>
-              <div className="font-medium text-gray-900">{shipment.service.type}</div>
+              <div className="text-sm text-muted-foreground">نوع الخدمة</div>
+              <div className="font-medium text-foreground">{shipment.service.type}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">طريقة الاستلام</div>
-              <div className="font-medium text-gray-900">
+              <div className="text-sm text-muted-foreground">طريقة الاستلام</div>
+              <div className="font-medium text-foreground">
                 {shipment.service.pickupMethod === 'home' ? 'الاستلام من المنزل' : 'التوصيل إلى مكتب البريد'}
               </div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">خيارات إضافية</div>
+              <div className="text-sm text-muted-foreground">خيارات إضافية</div>
               <div className="space-y-1">
                 {shipment.options.insurance && (
                   <div className="flex items-center text-sm">
@@ -327,7 +327,7 @@ export default function ShipmentDetailPage() {
                   </div>
                 )}
                 {!shipment.options.insurance && !shipment.options.signature && !shipment.options.packaging && !shipment.options.liquid && (
-                  <div className="text-sm text-gray-500">لم يتم اختيار خيارات إضافية</div>
+                  <div className="text-sm text-muted-foreground">لم يتم اختيار خيارات إضافية</div>
                 )}
               </div>
             </div>
@@ -336,35 +336,35 @@ export default function ShipmentDetailPage() {
       </div>
 
       {/* Cost Breakdown */}
-      <div className="mt-6 bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">تفاصيل التكلفة</h2>
+      <div className="mt-6 bg-muted p-6 rounded-lg shadow">
+        <h2 className="text-lg font-semibold mb-4 text-foreground">تفاصيل التكلفة</h2>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">تكلفة الشحن الأساسية</span>
-            <span className="font-medium text-gray-900">${shipment.rate.base?.toFixed(2) || '0.00'}</span>
+            <span className="text-muted-foreground">تكلفة الشحن الأساسية</span>
+            <span className="font-medium text-foreground">${shipment.rate.base?.toFixed(2) || '0.00'}</span>
           </div>
           {shipment.rate.insurance > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">التأمين</span>
-              <span className="font-medium text-gray-900">${shipment.rate.insurance.toFixed(2)}</span>
+              <span className="text-muted-foreground">التأمين</span>
+              <span className="font-medium text-foreground">${shipment.rate.insurance.toFixed(2)}</span>
             </div>
           )}
           {shipment.rate.signature > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">التوقيع المطلوب</span>
-              <span className="font-medium text-gray-900">${shipment.rate.signature.toFixed(2)}</span>
+              <span className="text-muted-foreground">التوقيع المطلوب</span>
+              <span className="font-medium text-foreground">${shipment.rate.signature.toFixed(2)}</span>
             </div>
           )}
           {shipment.rate.packaging > 0 && (
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">التغليف الاحترافي</span>
-              <span className="font-medium text-gray-900">${shipment.rate.packaging.toFixed(2)}</span>
+              <span className="text-muted-foreground">التغليف الاحترافي</span>
+              <span className="font-medium text-foreground">${shipment.rate.packaging.toFixed(2)}</span>
             </div>
           )}
-          <div className="border-t border-gray-200 pt-2 mt-2">
+          <div className="border-t border-border pt-2 mt-2">
             <div className="flex justify-between">
-              <span className="text-lg font-semibold text-gray-900">التكلفة الإجمالية</span>
-              <span className="text-lg font-bold text-blue-600">${shipment.rate.total?.toFixed(2) || '0.00'}</span>
+              <span className="text-lg font-semibold text-foreground">التكلفة الإجمالية</span>
+              <span className="text-lg font-bold text-primary">${shipment.rate.total?.toFixed(2) || '0.00'}</span>
             </div>
           </div>
         </div>

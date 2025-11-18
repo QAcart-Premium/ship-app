@@ -17,19 +17,19 @@ export default function RateCard({
 }: RateCardProps) {
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow ${
+      className={`bg-muted p-6 rounded-lg shadow border border-border ${
         disabled || calculatedPrice === null ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center gap-2 mb-4">
-        <DollarSign className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold">{t('form.rate')}</h2>
+        <DollarSign className="w-5 h-5 text-primary" />
+        <h2 className="text-xl font-semibold text-foreground">{t('form.rate')}</h2>
       </div>
       <div className="space-y-4">
-        <div className="flex justify-between items-center py-3 border-t border-b border-gray-200">
-          <span className="text-lg font-medium text-gray-700">{t('rate.totalPrice')}</span>
+        <div className="flex justify-between items-center py-3 border-t border-b border-border">
+          <span className="text-lg font-medium text-muted-foreground">{t('rate.totalPrice')}</span>
           <span
-            className="text-2xl font-bold text-blue-600"
+            className="text-2xl font-bold text-primary"
             data-testid="total-price"
           >
             {calculatedPrice !== null ? `$${calculatedPrice.toFixed(2)}` : '-'}
@@ -38,30 +38,30 @@ export default function RateCard({
 
         {rateBreakdown && (
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-muted-foreground">
               <span>{t('rate.baseShippingCost')}</span>
               <span>${rateBreakdown.baseCost.toFixed(2)}</span>
             </div>
             {rateBreakdown.signatureCost > 0 && (
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>{t('rate.signatureRequired')}</span>
                 <span>${rateBreakdown.signatureCost.toFixed(2)}</span>
               </div>
             )}
             {rateBreakdown.insuranceCost > 0 && (
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>{t('rate.insurance')}</span>
                 <span>${rateBreakdown.insuranceCost.toFixed(2)}</span>
               </div>
             )}
             {rateBreakdown.packagingCost > 0 && (
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>{t('rate.packaging')}</span>
                 <span>${rateBreakdown.packagingCost.toFixed(2)}</span>
               </div>
             )}
             {rateBreakdown.liquidCost > 0 && (
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-muted-foreground">
                 <span>{t('rate.liquidHandling')}</span>
                 <span>${rateBreakdown.liquidCost.toFixed(2)}</span>
               </div>
@@ -70,7 +70,7 @@ export default function RateCard({
         )}
 
         {calculatedPrice === null && (
-          <p className="text-sm text-gray-400 text-center py-4">
+          <p className="text-sm text-muted-foreground/70 text-center py-4">
             {disabled ? t('form.completePreviousSection') : t('form.selectServiceToSeePricing')}
           </p>
         )}

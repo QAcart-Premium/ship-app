@@ -30,9 +30,9 @@ export default function DynamicCard({
     const error = errors[fieldName]
     const isDisabled = disabled || field.disabled
 
-    const baseInputClass = `w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-      error ? 'border-red-500' : 'border-gray-300'
-    } ${isDisabled ? 'bg-gray-100 cursor-not-allowed' : ''}`
+    const baseInputClass = `w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground ${
+      error ? 'border-destructive' : 'border-border'
+    } ${isDisabled ? 'bg-nord-polar-3 cursor-not-allowed opacity-50' : ''}`
 
     switch (field.type) {
       case 'text':
@@ -40,7 +40,7 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-1"
             >
               {field.label} {field.required && '*'}
             </label>
@@ -59,7 +59,7 @@ export default function DynamicCard({
               aria-invalid={!!error}
             />
             {error && (
-              <p className="mt-1 text-sm text-red-600" data-testid={`${fieldName}-error`}>
+              <p className="mt-1 text-sm text-destructive" data-testid={`${fieldName}-error`}>
                 {error}
               </p>
             )}
@@ -71,7 +71,7 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-1"
             >
               {field.label} {field.required && '*'}
             </label>
@@ -94,7 +94,7 @@ export default function DynamicCard({
               ))}
             </select>
             {error && (
-              <p className="mt-1 text-sm text-red-600" data-testid={`${fieldName}-error`}>
+              <p className="mt-1 text-sm text-destructive" data-testid={`${fieldName}-error`}>
                 {error}
               </p>
             )}
@@ -106,11 +106,11 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-gray-700 mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-1"
             >
               {field.label} {field.required && '*'}
               {field.validation?.max && (
-                <span className="ml-2 text-xs text-gray-500">
+                <span className="ml-2 text-xs text-muted-foreground/70">
                   (Max: {field.validation.max})
                 </span>
               )}
@@ -132,7 +132,7 @@ export default function DynamicCard({
               aria-required={field.required}
             />
             {error && (
-              <p className="mt-1 text-sm text-red-600" data-testid={`${fieldName}-error`}>
+              <p className="mt-1 text-sm text-destructive" data-testid={`${fieldName}-error`}>
                 {error}
               </p>
             )}
@@ -150,11 +150,11 @@ export default function DynamicCard({
               onChange={(e) => onChange(fieldName, e.target.checked)}
               disabled={isDisabled}
               data-testid={`${fieldName}-checkbox`}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              className="h-4 w-4 text-primary border-border rounded focus:ring-primary disabled:cursor-not-allowed"
             />
             <label
               htmlFor={fieldName}
-              className={`ml-2 text-sm ${isDisabled ? 'text-gray-400' : 'text-gray-700'}`}
+              className={`ml-2 text-sm ${isDisabled ? 'text-muted-foreground/50' : 'text-muted-foreground'}`}
             >
               {field.label}
             </label>
@@ -175,32 +175,32 @@ export default function DynamicCard({
   // Determine icon based on card title
   const getIcon = () => {
     const title = rules?.title?.toLowerCase() || ''
-    if (title.includes('sender')) return <User className="w-5 h-5 text-blue-600" />
-    if (title.includes('receiver')) return <Users className="w-5 h-5 text-blue-600" />
-    if (title.includes('package')) return <Package className="w-5 h-5 text-blue-600" />
-    return <CheckCircle className="w-5 h-5 text-blue-600" />
+    if (title.includes('sender')) return <User className="w-5 h-5 text-primary" />
+    if (title.includes('receiver')) return <Users className="w-5 h-5 text-primary" />
+    if (title.includes('package')) return <Package className="w-5 h-5 text-primary" />
+    return <CheckCircle className="w-5 h-5 text-primary" />
   }
 
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow ${
+      className={`bg-muted p-6 rounded-lg shadow border border-border ${
         disabled || !rules ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           {getIcon()}
-          <h2 className="text-xl font-semibold">{rules?.title || cardTitle || 'Loading...'}</h2>
+          <h2 className="text-xl font-semibold text-foreground">{rules?.title || cardTitle || 'Loading...'}</h2>
         </div>
         {shipmentType && (
-          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+          <span className="text-xs bg-nord-frost-1/20 text-primary px-2 py-1 rounded">
             {shipmentType}
           </span>
         )}
       </div>
 
       {!rules ? (
-        <p className="text-sm text-gray-400 text-center py-4">
+        <p className="text-sm text-muted-foreground/70 text-center py-4">
           {disabled ? t('form.completePreviousSection') : t('form.loadingCard')}
         </p>
       ) : (

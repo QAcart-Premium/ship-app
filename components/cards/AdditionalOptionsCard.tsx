@@ -25,17 +25,17 @@ export default function AdditionalOptionsCard({
 
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow ${
+      className={`bg-muted p-6 rounded-lg shadow border border-border ${
         disabled || !rules ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center gap-2 mb-4">
-        <Settings className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold">{rules?.title || t('form.additionalOptions')}</h2>
+        <Settings className="w-5 h-5 text-primary" />
+        <h2 className="text-xl font-semibold text-foreground">{rules?.title || t('form.additionalOptions')}</h2>
       </div>
 
       {!rules ? (
-        <p className="text-sm text-gray-400 text-center py-4">
+        <p className="text-sm text-muted-foreground/70 text-center py-4">
           {disabled ? t('form.completePreviousSection') : t('form.loadingOptions')}
         </p>
       ) : (
@@ -48,13 +48,13 @@ export default function AdditionalOptionsCard({
               checked={formData.signatureRequired}
               onChange={(e) => onChange('signatureRequired', e.target.checked)}
               disabled={disabled || !rules || signatureField.disabled}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              className="h-4 w-4 text-primary border-border rounded focus:ring-primary disabled:cursor-not-allowed"
               data-testid="signature-required-checkbox"
             />
             <label
               htmlFor="signatureRequired"
               className={`ml-2 text-sm ${
-                signatureField.disabled ? 'text-gray-500' : 'text-gray-700'
+                signatureField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
               {signatureField.label}
@@ -69,13 +69,13 @@ export default function AdditionalOptionsCard({
               checked={formData.containsLiquid}
               onChange={(e) => onChange('containsLiquid', e.target.checked)}
               disabled={disabled || !rules || liquidField.disabled}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              className="h-4 w-4 text-primary border-border rounded focus:ring-primary disabled:cursor-not-allowed"
               data-testid="contains-liquid-checkbox"
             />
             <label
               htmlFor="containsLiquid"
               className={`ml-2 text-sm ${
-                liquidField.disabled ? 'text-gray-500' : 'text-gray-700'
+                liquidField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
               {liquidField.label}
@@ -90,13 +90,13 @@ export default function AdditionalOptionsCard({
               checked={formData.insurance}
               onChange={(e) => onChange('insurance', e.target.checked)}
               disabled={disabled || !rules || insuranceField.disabled}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              className="h-4 w-4 text-primary border-border rounded focus:ring-primary disabled:cursor-not-allowed"
               data-testid="insurance-checkbox"
             />
             <label
               htmlFor="insurance"
               className={`ml-2 text-sm ${
-                insuranceField.disabled ? 'text-gray-500' : 'text-gray-700'
+                insuranceField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
               {insuranceField.label}
@@ -111,13 +111,13 @@ export default function AdditionalOptionsCard({
               checked={formData.packaging}
               onChange={(e) => onChange('packaging', e.target.checked)}
               disabled={disabled || !rules || packagingField.disabled}
-              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:cursor-not-allowed"
+              className="h-4 w-4 text-primary border-border rounded focus:ring-primary disabled:cursor-not-allowed"
               data-testid="packaging-checkbox"
             />
             <label
               htmlFor="packaging"
               className={`ml-2 text-sm ${
-                packagingField.disabled ? 'text-gray-500' : 'text-gray-700'
+                packagingField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
               {packagingField.label}
@@ -125,8 +125,8 @@ export default function AdditionalOptionsCard({
           </div>
         )}
         {pickupField && (
-          <div className="pt-3 border-t">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="pt-3 border-t border-border">
+            <label className="block text-sm font-medium text-muted-foreground mb-2">
               {pickupField.label}
             </label>
             <div className="space-y-2">
@@ -143,13 +143,13 @@ export default function AdditionalOptionsCard({
                       checked={formData.pickupMethod === option.value}
                       onChange={(e) => onChange('pickupMethod', e.target.value)}
                       disabled={isDisabled}
-                      className="h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500 disabled:cursor-not-allowed"
+                      className="h-4 w-4 text-primary border-border focus:ring-primary disabled:cursor-not-allowed"
                       data-testid={`pickup-${option.value}-radio`}
                     />
                     <label
                       htmlFor={`pickup-${option.value}`}
                       className={`ml-2 text-sm ${
-                        isDisabled ? 'text-gray-400' : 'text-gray-700'
+                        isDisabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
                       }`}
                     >
                       {option.label}

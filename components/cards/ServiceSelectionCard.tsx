@@ -19,17 +19,17 @@ export default function ServiceSelectionCard({
 }: ServiceSelectionCardProps) {
   return (
     <div
-      className={`bg-white p-6 rounded-lg shadow ${
+      className={`bg-muted p-6 rounded-lg shadow border border-border ${
         disabled || !serviceRules ? 'opacity-50' : ''
       }`}
     >
       <div className="flex items-center gap-2 mb-4">
-        <Truck className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold">{t('form.serviceSelection')}</h2>
+        <Truck className="w-5 h-5 text-primary" />
+        <h2 className="text-xl font-semibold text-foreground">{t('form.serviceSelection')}</h2>
       </div>
 
       {!serviceRules ? (
-        <p className="text-sm text-gray-400 text-center py-4">
+        <p className="text-sm text-muted-foreground/70 text-center py-4">
           {disabled ? t('form.completePreviousSection') : t('form.loadingServices')}
         </p>
       ) : (
@@ -42,23 +42,23 @@ export default function ServiceSelectionCard({
               disabled={disabled}
               className={`w-full text-left p-4 border-2 rounded-lg transition-all ${
                 selectedService?.id === service.id
-                  ? 'border-blue-600 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
+                  ? 'border-primary bg-nord-frost-1/20'
+                  : 'border-border hover:border-primary/50'
               } ${disabled ? 'cursor-not-allowed' : ''}`}
               data-testid={`service-${service.id}`}
             >
               <div className="flex justify-between items-start mb-1">
-                <span className="font-semibold text-gray-900">
+                <span className="font-semibold text-foreground">
                   {service.name}
                 </span>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-muted-foreground">
                   {service.deliveryDays} {service.deliveryDays === 1 ? t('rate.day') : t('rate.days')}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-muted-foreground mb-2">
                 {service.description}
               </p>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-muted-foreground/70">
                 {t('rate.base')}: ${service.basePrice} + ${service.pricePerKg}/كجم
               </div>
             </button>

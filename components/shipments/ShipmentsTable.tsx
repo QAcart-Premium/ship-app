@@ -12,14 +12,14 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
   const getStatusBadge = (status: string) => {
     if (status === 'draft') {
       return (
-        <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800">
+        <span className="px-2 py-1 text-xs font-medium rounded-full bg-nord-polar-2 text-muted-foreground">
           {t('status.Draft')}
         </span>
       )
     }
     // All non-draft statuses are considered "finalized"
     return (
-      <span className="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
+      <span className="px-2 py-1 text-xs font-medium rounded-full bg-nord-aurora-green/20 text-premium">
         مُكتمل
       </span>
     )
@@ -29,7 +29,7 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
     return (
       <div className="text-center py-12">
         <svg
-          className="mx-auto h-12 w-12 text-gray-400"
+          className="mx-auto h-12 w-12 text-muted-foreground/50"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -41,14 +41,14 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
             d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
           />
         </svg>
-        <h3 className="mt-2 text-sm font-medium text-gray-900">{t('table.noShipments')}</h3>
-        <p className="mt-1 text-sm text-gray-500">
+        <h3 className="mt-2 text-sm font-medium text-foreground">{t('table.noShipments')}</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
           {t('table.createFirstShipment')}
         </p>
         <div className="mt-6">
           <Link
             href="/"
-            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-nord-polar-0 bg-primary hover:bg-nord-frost-3"
           >
             + {t('table.createShipment')}
           </Link>
@@ -58,56 +58,56 @@ export default function ShipmentsTable({ shipments, onMenuClick }: ShipmentsTabl
   }
 
   return (
-    <div className="rounded-lg" style={{ overflowX: 'auto', overflowY: 'visible' }}>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
+    <div className="rounded-lg border border-border" style={{ overflowX: 'auto', overflowY: 'visible' }}>
+      <table className="min-w-full divide-y divide-border">
+        <thead className="bg-nord-polar-2">
           <tr>
-            <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
+            <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider w-16">
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {t('table.trackingNumber')}
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               المرسل
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               المستلم
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               الوجهة
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               النوع
             </th>
-            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
               {t('table.status')}
             </th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
+        <tbody className="bg-muted divide-y divide-border">
           {shipments.map((shipment) => (
-            <tr key={shipment.id} className="hover:bg-gray-50">
+            <tr key={shipment.id} className="hover:bg-nord-polar-2">
               <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-right">
                 <button
                   onClick={(e) => onMenuClick(shipment.id, e)}
-                  className="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+                  className="text-muted-foreground hover:text-primary p-1 rounded hover:bg-nord-polar-2"
                 >
                   <MoreVertical className="w-5 h-5" />
                 </button>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-foreground text-right">
                 {shipment.status === 'draft' ? '-' : shipment.trackingNumber}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground text-right">
                 {shipment.from.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-foreground text-right">
                 {shipment.to.name}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground text-right">
                 {shipment.to.city}, {shipment.to.country}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground text-right">
                 {t(`shipmentTypes.${shipment.service.shipmentType}`)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right">

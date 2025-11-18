@@ -152,7 +152,7 @@ function ShipmentsPageContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">جاري تحميل الشحنات...</div>
+        <div className="text-muted-foreground">جاري تحميل الشحنات...</div>
       </div>
     )
   }
@@ -163,12 +163,12 @@ function ShipmentsPageContent() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">شحناتي</h1>
-            <p className="mt-2 text-gray-600">عرض وإدارة جميع شحناتك</p>
+            <h1 className="text-3xl font-bold text-foreground">شحناتي</h1>
+            <p className="mt-2 text-muted-foreground">عرض وإدارة جميع شحناتك</p>
           </div>
           <Link
             href="/"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="px-4 py-2 bg-primary text-nord-polar-0 rounded-md hover:bg-nord-frost-3 transition-colors"
           >
             + إنشاء شحنة
           </Link>
@@ -203,7 +203,7 @@ function ShipmentsPageContent() {
       )}
 
       {/* Shipments Table */}
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-muted rounded-lg shadow">
         <ShipmentsTable
           shipments={shipments}
           onMenuClick={handleMenuClick}
@@ -243,7 +243,7 @@ export default function ShipmentsPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center py-12">
-          <div className="text-gray-500">جاري تحميل الشحنات...</div>
+          <div className="text-muted-foreground">جاري تحميل الشحنات...</div>
         </div>
       }
     >

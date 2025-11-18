@@ -20,7 +20,7 @@ export default function KebabMenu({
 }: KebabMenuProps) {
   return (
     <div
-      className="fixed w-48 bg-white rounded-lg shadow-xl z-50 border border-gray-200 overflow-hidden"
+      className="fixed w-48 bg-muted rounded-lg shadow-xl z-50 border border-border overflow-hidden"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -31,7 +31,7 @@ export default function KebabMenu({
           <>
             <Link
               href={`/shipments/${shipmentId}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-nord-frost-1/20 hover:text-primary transition-colors"
               onClick={onClose}
             >
               <Eye className="w-4 h-4" />
@@ -39,7 +39,7 @@ export default function KebabMenu({
             </Link>
             <Link
               href={`/?edit=${shipmentId}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-nord-frost-1/20 hover:text-primary transition-colors"
               onClick={onClose}
             >
               <Edit className="w-4 h-4" />
@@ -47,14 +47,14 @@ export default function KebabMenu({
             </Link>
             <button
               onClick={() => onFinalize?.(shipmentId)}
-              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:bg-nord-frost-1/20 hover:text-primary transition-colors"
             >
               <FileCheck className="w-4 h-4" />
               إتمام الشحنة
             </button>
             <button
               onClick={() => onDelete(shipmentId)}
-              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-nord-aurora-red/20 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
               حذف
@@ -64,7 +64,7 @@ export default function KebabMenu({
           <>
             <Link
               href={`/shipments/${shipmentId}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-nord-frost-1/20 hover:text-primary transition-colors"
               onClick={onClose}
             >
               <Eye className="w-4 h-4" />
@@ -72,7 +72,7 @@ export default function KebabMenu({
             </Link>
             <Link
               href={`/?repeat=${shipmentId}`}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground hover:bg-nord-frost-1/20 hover:text-primary transition-colors"
               onClick={onClose}
             >
               <Copy className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function KebabMenu({
             </Link>
             <button
               onClick={() => onDelete(shipmentId)}
-              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              className="flex items-center gap-3 w-full text-left px-4 py-2.5 text-sm text-destructive hover:bg-nord-aurora-red/20 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
               حذف

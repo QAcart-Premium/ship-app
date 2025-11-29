@@ -22,7 +22,8 @@
       "validation": {
         "required": true,
         "minLength": 10,
-        "errorMessage": "يجب أن يكون رقم الهاتف على الأقل 10 أرقام"
+        "maxLength": 15,
+        "errorMessage": "يجب أن يكون رقم الهاتف بين 10-15 رقم"
       },
       "placeholder": "مثال: 0501234567"
     },

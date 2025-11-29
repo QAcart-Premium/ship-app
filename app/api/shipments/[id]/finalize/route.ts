@@ -22,19 +22,19 @@ export async function POST(
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
+      return NextResponse.json({ error: 'معرف الشحنة غير صالح' }, { status: 400 })
     }
 
     // STEP 1: Load and verify shipment exists and belongs to user
     const shipment = await shipmentRepository.findById(id, user!.id)
 
     if (!shipment) {
-      return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
+      return NextResponse.json({ error: 'الشحنة غير موجودة' }, { status: 404 })
     }
 
     // Only allow finalizing draft shipments
     if (shipment.status !== 'draft') {
-      return NextResponse.json({ error: 'Shipment is already finalized' }, { status: 400 })
+      return NextResponse.json({ error: 'الشحنة مكتملة بالفعل' }, { status: 400 })
     }
 
     // STEP 2: Convert shipment to ShipmentFormData format for validation
@@ -70,9 +70,9 @@ export async function POST(
     if (!validation.isValid) {
       return NextResponse.json(
         {
-          error: 'Validation failed',
+          error: 'فشل التحقق من صحة البيانات',
           validationErrors: validation.errors,
-          message: 'This draft cannot be finalized because it contains validation errors',
+          message: 'لا يمكن إتمام هذه المسودة لأنها تحتوي على أخطاء في البيانات',
         },
         { status: 400 }
       )
@@ -85,8 +85,8 @@ export async function POST(
     } catch (error) {
       return NextResponse.json(
         {
-          error: 'Rate calculation failed',
-          details: error instanceof Error ? error.message : 'Invalid service or weight',
+          error: 'فشل حساب التكلفة',
+          details: error instanceof Error ? error.message : 'خدمة أو وزن غير صالح',
         },
         { status: 400 }
       )
@@ -110,7 +110,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: true,
-        message: 'Shipment finalized successfully',
+        message: 'تم إتمام الشحنة بنجاح',
         shipment: finalizedShipment,
         rateBreakdown: rateCalculation.breakdown,
       },
@@ -120,8 +120,8 @@ export async function POST(
     console.error('Shipment finalization error:', error)
     return NextResponse.json(
       {
-        error: 'Failed to finalize shipment',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: 'فشل إتمام الشحنة',
+        details: error instanceof Error ? error.message : 'خطأ غير معروف',
       },
       { status: 500 }
     )

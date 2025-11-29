@@ -204,6 +204,8 @@ export const translations = {
     failedToCreateShipment: 'فشل إنشاء الشحنة',
     failedToUpdateShipment: 'فشل تحديث الشحنة',
     gulfToIraqNotAllowed: 'الشحن من دول الخليج إلى العراق غير ممكن حالياً',
+    validationFailed: 'الرجاء تصحيح الأخطاء في النموذج',
+    pleaseFixErrors: 'يرجى تصحيح الأخطاء التالية',
   },
 
   // Placeholders

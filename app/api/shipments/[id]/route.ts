@@ -18,21 +18,21 @@ export async function GET(
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
+      return NextResponse.json({ error: 'معرف الشحنة غير صالح' }, { status: 400 })
     }
 
     // Use repository to fetch shipment
     const shipment = await shipmentRepository.findById(id, user!.id)
 
     if (!shipment) {
-      return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
+      return NextResponse.json({ error: 'الشحنة غير موجودة' }, { status: 404 })
     }
 
     return NextResponse.json({ shipment })
   } catch (error) {
     console.error('Error fetching shipment:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch shipment' },
+      { error: 'فشل تحميل الشحنة' },
       { status: 500 }
     )
   }
@@ -54,7 +54,7 @@ export async function PUT(
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
+      return NextResponse.json({ error: 'معرف الشحنة غير صالح' }, { status: 400 })
     }
 
     const body = await request.json()
@@ -64,13 +64,13 @@ export async function PUT(
     const existingShipment = await shipmentRepository.findById(id, user!.id)
 
     if (!existingShipment) {
-      return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
+      return NextResponse.json({ error: 'الشحنة غير موجودة' }, { status: 404 })
     }
 
     // Only allow updating draft shipments
     if (existingShipment.status !== 'draft') {
       return NextResponse.json(
-        { error: 'Can only edit draft shipments' },
+        { error: 'يمكن تعديل المسودات فقط' },
         { status: 400 }
       )
     }
@@ -126,13 +126,13 @@ export async function PUT(
 
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: 'Failed to update shipment', details: error.message },
+        { error: 'فشل تحديث الشحنة', details: error.message },
         { status: 400 }
       )
     }
 
     return NextResponse.json(
-      { error: 'Failed to update shipment' },
+      { error: 'فشل تحديث الشحنة' },
       { status: 500 }
     )
   }
@@ -154,14 +154,14 @@ export async function DELETE(
     const id = parseInt(params.id)
 
     if (isNaN(id)) {
-      return NextResponse.json({ error: 'Invalid shipment ID' }, { status: 400 })
+      return NextResponse.json({ error: 'معرف الشحنة غير صالح' }, { status: 400 })
     }
 
     // Check if shipment exists and belongs to user
     const existingShipment = await shipmentRepository.findById(id, user!.id)
 
     if (!existingShipment) {
-      return NextResponse.json({ error: 'Shipment not found' }, { status: 404 })
+      return NextResponse.json({ error: 'الشحنة غير موجودة' }, { status: 404 })
     }
 
     // Delete shipment using repository
@@ -170,13 +170,13 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: existingShipment.status === 'draft'
-        ? 'Shipment deleted successfully'
-        : 'Shipment cancelled successfully',
+        ? 'تم حذف الشحنة بنجاح'
+        : 'تم إلغاء الشحنة بنجاح',
     })
   } catch (error) {
     console.error('Error deleting shipment:', error)
     return NextResponse.json(
-      { error: 'Failed to delete shipment' },
+      { error: 'فشل حذف الشحنة' },
       { status: 500 }
     )
   }

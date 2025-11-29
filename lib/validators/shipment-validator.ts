@@ -57,36 +57,36 @@ export function validateSenderData(data: Partial<ShipmentFormData>): ValidationR
 
   // Validate required fields
   if (!data.senderName || data.senderName.trim().length < 2) {
-    errors.senderName = 'Sender name must be at least 2 characters'
+    errors.senderName = 'يجب أن يكون اسم المرسل على الأقل حرفين'
   }
 
   if (!data.senderPhone) {
-    errors.senderPhone = 'Sender phone is required'
+    errors.senderPhone = 'رقم هاتف المرسل مطلوب'
   } else {
     // Phone validation: at least 10 digits
     const digits = data.senderPhone.replace(/\D/g, '')
     if (digits.length < 10) {
-      errors.senderPhone = 'Phone number must have at least 10 digits'
+      errors.senderPhone = 'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل'
     }
   }
 
   if (!data.senderCountry) {
-    errors.senderCountry = 'Sender country is required'
+    errors.senderCountry = 'دولة المرسل مطلوبة'
   }
 
   if (!data.senderCity || data.senderCity.trim().length < 2) {
-    errors.senderCity = 'Sender city must be at least 2 characters'
+    errors.senderCity = 'يجب أن تكون مدينة المرسل على الأقل حرفين'
   }
 
   if (!data.senderPostalCode || data.senderPostalCode.trim().length < 3) {
-    errors.senderPostalCode = 'Sender postal code must be at least 3 characters'
+    errors.senderPostalCode = 'يجب أن يكون الرمز البريدي للمرسل على الأقل 3 أحرف'
   }
 
   // Business Rule: Street is required for Gulf countries
   const isSenderGulf = data.senderCountry ? isGulfCountry(data.senderCountry) : false
   if (isSenderGulf) {
     if (!data.senderStreet || data.senderStreet.trim().length === 0) {
-      errors.senderStreet = 'Street address is required for Gulf countries'
+      errors.senderStreet = 'عنوان الشارع مطلوب لدول الخليج'
     }
   }
 
@@ -107,36 +107,36 @@ export function validateReceiverData(
 
   // Validate required fields
   if (!data.receiverName || data.receiverName.trim().length < 2) {
-    errors.receiverName = 'Receiver name must be at least 2 characters'
+    errors.receiverName = 'يجب أن يكون اسم المستلم على الأقل حرفين'
   }
 
   if (!data.receiverPhone) {
-    errors.receiverPhone = 'Receiver phone is required'
+    errors.receiverPhone = 'رقم هاتف المستلم مطلوب'
   } else {
     // Phone validation: at least 10 digits
     const digits = data.receiverPhone.replace(/\D/g, '')
     if (digits.length < 10) {
-      errors.receiverPhone = 'Phone number must have at least 10 digits'
+      errors.receiverPhone = 'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل'
     }
   }
 
   if (!data.receiverCountry) {
-    errors.receiverCountry = 'Receiver country is required'
+    errors.receiverCountry = 'دولة المستلم مطلوبة'
   }
 
   if (!data.receiverCity || data.receiverCity.trim().length < 2) {
-    errors.receiverCity = 'Receiver city must be at least 2 characters'
+    errors.receiverCity = 'يجب أن تكون مدينة المستلم على الأقل حرفين'
   }
 
   if (!data.receiverPostalCode || data.receiverPostalCode.trim().length < 3) {
-    errors.receiverPostalCode = 'Receiver postal code must be at least 3 characters'
+    errors.receiverPostalCode = 'يجب أن يكون الرمز البريدي للمستلم على الأقل 3 أحرف'
   }
 
   // Business Rule: Street is required for Gulf countries
   const isReceiverGulf = data.receiverCountry ? isGulfCountry(data.receiverCountry) : false
   if (isReceiverGulf) {
     if (!data.receiverStreet || data.receiverStreet.trim().length === 0) {
-      errors.receiverStreet = 'Street address is required for Gulf countries'
+      errors.receiverStreet = 'عنوان الشارع مطلوب لدول الخليج'
     }
   }
 
@@ -144,7 +144,7 @@ export function validateReceiverData(
   if (senderCountry && data.receiverCountry) {
     const isSenderGulf = isGulfCountry(senderCountry)
     if (isSenderGulf && data.receiverCountry === 'Iraq') {
-      errors.receiverCountry = 'Shipping from Gulf countries to Iraq is currently not possible'
+      errors.receiverCountry = 'الشحن من دول الخليج إلى العراق غير متاح حالياً'
     }
   }
 
@@ -165,32 +165,32 @@ export function validatePackageData(
 
   // Validate weight
   if (!data.weight || data.weight <= 0) {
-    errors.weight = 'Weight must be greater than 0 kg'
+    errors.weight = 'يجب أن يكون الوزن أكبر من 0 كجم'
   } else {
     // Get max weight for shipment type
     const typeRules = packageCardRules.shipmentTypes[shipmentType]
     if (typeRules && data.weight > typeRules.maxWeight) {
-      errors.weight = `Weight cannot exceed ${typeRules.maxWeight}kg for ${shipmentType} shipments`
+      errors.weight = `لا يمكن أن يتجاوز الوزن ${typeRules.maxWeight} كجم للشحنات من نوع ${shipmentType}`
     }
   }
 
   // Validate dimensions
   if (!data.length || data.length <= 0) {
-    errors.length = 'Length must be greater than 0 cm'
+    errors.length = 'يجب أن يكون الطول أكبر من 0 سم'
   } else if (data.length > 200) {
-    errors.length = 'Length cannot exceed 200 cm'
+    errors.length = 'لا يمكن أن يتجاوز الطول 200 سم'
   }
 
   if (!data.width || data.width <= 0) {
-    errors.width = 'Width must be greater than 0 cm'
+    errors.width = 'يجب أن يكون العرض أكبر من 0 سم'
   } else if (data.width > 200) {
-    errors.width = 'Width cannot exceed 200 cm'
+    errors.width = 'لا يمكن أن يتجاوز العرض 200 سم'
   }
 
   if (!data.height || data.height <= 0) {
-    errors.height = 'Height must be greater than 0 cm'
+    errors.height = 'يجب أن يكون الارتفاع أكبر من 0 سم'
   } else if (data.height > 200) {
-    errors.height = 'Height cannot exceed 200 cm'
+    errors.height = 'لا يمكن أن يتجاوز الارتفاع 200 سم'
   }
 
   // Business Rule: Item description required for non-Gulf to Gulf shipments
@@ -201,7 +201,7 @@ export function validatePackageData(
 
     if (isNonGulfToGulf) {
       if (!data.itemDescription || data.itemDescription.trim().length < 5) {
-        errors.itemDescription = 'Item description is required (minimum 5 characters) when shipping from non-Gulf to Gulf countries'
+        errors.itemDescription = 'وصف الصنف مطلوب (5 أحرف كحد أدنى) عند الشحن من خارج الخليج إلى دول الخليج'
       }
     }
   }
@@ -221,14 +221,14 @@ export function validateAdditionalOptions(data: Partial<ShipmentFormData>): Vali
   // Business Rule: Signature required for Jordan and Egypt
   if (data.receiverCountry === 'Jordan' || data.receiverCountry === 'Egypt') {
     if (!data.signatureRequired) {
-      errors.signatureRequired = `Signature is required when shipping to ${data.receiverCountry}`
+      errors.signatureRequired = `التوقيع مطلوب عند الشحن إلى ${data.receiverCountry}`
     }
   }
 
   // Business Rule: Home pickup disabled for packages > 17kg (except Iraq)
   if (data.weight && data.weight > 17 && data.senderCountry !== 'Iraq') {
     if (data.pickupMethod === 'home') {
-      errors.pickupMethod = 'Home pickup is not available for packages over 17kg. Please select postal office drop-off'
+      errors.pickupMethod = 'الاستلام المنزلي غير متاح للطرود التي تزيد عن 17 كجم. الرجاء اختيار التسليم في مكتب البريد'
     }
   }
 
@@ -245,15 +245,15 @@ export function validateServiceSelection(data: Partial<ShipmentFormData>): Valid
   const errors: Record<string, string> = {}
 
   if (!data.serviceType) {
-    errors.serviceType = 'Service type is required'
+    errors.serviceType = 'نوع الخدمة مطلوب'
   }
 
   if (!data.shipmentType) {
-    errors.shipmentType = 'Shipment type is required'
+    errors.shipmentType = 'نوع الشحنة مطلوب'
   }
 
   if (!data.pickupMethod) {
-    errors.pickupMethod = 'Pickup method is required'
+    errors.pickupMethod = 'طريقة الاستلام مطلوبة'
   }
 
   return {
@@ -301,19 +301,19 @@ export function validateDraftShipment(data: Partial<ShipmentFormData>): Validati
 
   // Only validate that if data exists, it's in the right format
   if (data.weight !== undefined && (isNaN(Number(data.weight)) || Number(data.weight) < 0)) {
-    errors.weight = 'Weight must be a valid number'
+    errors.weight = 'يجب أن يكون الوزن رقماً صحيحاً'
   }
 
   if (data.length !== undefined && (isNaN(Number(data.length)) || Number(data.length) < 0)) {
-    errors.length = 'Length must be a valid number'
+    errors.length = 'يجب أن يكون الطول رقماً صحيحاً'
   }
 
   if (data.width !== undefined && (isNaN(Number(data.width)) || Number(data.width) < 0)) {
-    errors.width = 'Width must be a valid number'
+    errors.width = 'يجب أن يكون العرض رقماً صحيحاً'
   }
 
   if (data.height !== undefined && (isNaN(Number(data.height)) || Number(data.height) < 0)) {
-    errors.height = 'Height must be a valid number'
+    errors.height = 'يجب أن يكون الارتفاع رقماً صحيحاً'
   }
 
   return {

@@ -324,17 +324,25 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
       }
     }
 
+    // Phone number validation - count only digits
+    const isPhoneField = fieldName.toLowerCase().includes('phone')
+    const checkLength = isPhoneField && value ? value.replace(/\D/g, '').length : value?.length || 0
+
     // MinLength validation
     if (fieldRule.validation?.minLength && value) {
-      if (value.length < fieldRule.validation.minLength) {
-        return `Minimum ${fieldRule.validation.minLength} characters required`
+      if (checkLength < fieldRule.validation.minLength) {
+        return isPhoneField
+          ? `Phone number must have at least ${fieldRule.validation.minLength} digits`
+          : `Minimum ${fieldRule.validation.minLength} characters required`
       }
     }
 
     // MaxLength validation
     if (fieldRule.validation?.maxLength && value) {
-      if (value.length > fieldRule.validation.maxLength) {
-        return `Maximum ${fieldRule.validation.maxLength} characters allowed`
+      if (checkLength > fieldRule.validation.maxLength) {
+        return isPhoneField
+          ? `Phone number cannot exceed ${fieldRule.validation.maxLength} digits`
+          : `Maximum ${fieldRule.validation.maxLength} characters allowed`
       }
     }
 
@@ -529,6 +537,12 @@ export function useShipmentForm(editId?: string | null, repeatId?: string | null
 
       if (!response.ok) {
         const error = await response.json()
+
+        // If there are validation errors from backend, show them in the form
+        if (error.validationErrors && typeof error.validationErrors === 'object') {
+          setErrors(error.validationErrors)
+          throw new Error(error.message || 'الرجاء تصحيح الأخطاء في النموذج')
+        }
 
         // If there are validation details, format them nicely
         if (error.details && Array.isArray(error.details)) {

@@ -20,8 +20,8 @@ export async function POST(request: NextRequest) {
 
     // Add country options to the senderCountry field
     const countryOptions = countriesData.countries.map((country) => ({
-      value: country.name,
-      label: country.name,
+      value: country.nameAr,
+      label: country.nameAr,
     }))
 
     // Update the senderCountry field with options
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
     // Check if sender country is a Gulf country
     const senderCountryData = countriesData.countries.find(
-      (c) => c.name === senderCountry
+      (c) => c.nameAr === senderCountry || c.name === senderCountry
     )
     const isGulfCountry = senderCountryData?.isGulf || false
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error loading sender rules:', error)
     return NextResponse.json(
-      { error: 'Failed to load sender rules' },
+      { error: 'فشل في تحميل قواعد المرسل' },
       { status: 500 }
     )
   }

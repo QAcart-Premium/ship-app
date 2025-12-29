@@ -7,7 +7,7 @@ import type { ShipmentType } from '@/lib/types'
  * Determine if a country is a Gulf country
  */
 function isGulfCountry(countryName: string): boolean {
-  const country = countriesData.countries.find((c) => c.name === countryName)
+  const country = countriesData.countries.find((c) => c.nameAr === countryName || c.name === countryName)
   return country?.isGulf || false
 }
 
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     // Validate required parameters
     if (!senderCountry || !receiverCountry) {
       return NextResponse.json(
-        { error: 'senderCountry and receiverCountry are required' },
+        { error: 'دولة المرسل والمستلم مطلوبة' },
         { status: 400 }
       )
     }
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     if (!typeRules) {
       return NextResponse.json(
-        { error: 'Invalid shipment type' },
+        { error: 'نوع الشحنة غير صالح' },
         { status: 400 }
       )
     }
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     // Update weight validation with the max weight for this shipment type
     if (rules.fields.weight?.validation) {
       rules.fields.weight.validation.max = typeRules.maxWeight
-      rules.fields.weight.validation.errorMessage = `Weight must be between 0.1 and ${typeRules.maxWeight} kg for ${shipmentType} shipments`
+      rules.fields.weight.validation.errorMessage = `يجب أن يكون الوزن بين 0.1 و ${typeRules.maxWeight} كجم`
     }
 
     // Check if sender is non-Gulf and receiver is Gulf
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error loading package rules:', error)
     return NextResponse.json(
-      { error: 'Failed to load package rules' },
+      { error: 'فشل في تحميل قواعد الطرد' },
       { status: 500 }
     )
   }

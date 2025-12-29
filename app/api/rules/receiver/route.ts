@@ -22,8 +22,8 @@ export async function POST(request: NextRequest) {
 
     // Build country options (always show all countries)
     const countryOptions = countriesData.countries.map((country) => ({
-      value: country.name,
-      label: country.name,
+      value: country.nameAr,
+      label: country.nameAr,
     }))
 
     // Update the receiverCountry field with options
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     // Check if receiver country is a Gulf country
     const receiverCountryData = countriesData.countries.find(
-      (c) => c.name === receiverCountry
+      (c) => c.nameAr === receiverCountry || c.name === receiverCountry
     )
     const isReceiverGulfCountry = receiverCountryData?.isGulf || false
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     // Check if sender country is a Gulf country
     const senderCountryDataForValidation = countriesData.countries.find(
-      (c) => c.name === senderCountry
+      (c) => c.nameAr === senderCountry || c.name === senderCountry
     )
     const isSenderGulf = senderCountryDataForValidation?.isGulf || false
 
@@ -55,8 +55,9 @@ export async function POST(request: NextRequest) {
     const validationErrors: Record<string, string> = {}
 
     // Rule: Cannot ship from Gulf countries to Iraq
-    if (isSenderGulf && receiverCountry === 'Iraq') {
-      validationErrors.receiverCountry = 'Shipping from Gulf countries to Iraq is currently not possible'
+    const isIraq = receiverCountry === 'العراق' || receiverCountry === 'Iraq'
+    if (isSenderGulf && isIraq) {
+      validationErrors.receiverCountry = 'الشحن من دول الخليج إلى العراق غير ممكن حالياً'
     }
 
     return NextResponse.json({
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error loading receiver rules:', error)
     return NextResponse.json(
-      { error: 'Failed to load receiver rules' },
+      { error: 'فشل في تحميل قواعد المستلم' },
       { status: 500 }
     )
   }

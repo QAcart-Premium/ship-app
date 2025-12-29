@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Validate required parameters
     if (!serviceId || !weight || !senderCountry || !receiverCountry || !pickupMethod) {
       return NextResponse.json(
-        { error: 'Missing required parameters' },
+        { error: 'يجب ملء جميع الحقول المطلوبة' },
         { status: 400 }
       )
     }
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     if (!selectedService || !shipmentType) {
       return NextResponse.json(
-        { error: 'Service not found' },
+        { error: 'الخدمة غير موجودة' },
         { status: 404 }
       )
     }
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error calculating rate:', error)
     return NextResponse.json(
-      { error: 'Failed to calculate rate' },
+      { error: 'فشل في حساب السعر' },
       { status: 500 }
     )
   }

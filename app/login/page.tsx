@@ -64,12 +64,6 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
             {t('auth.loginTitle')}
           </h2>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            {t('auth.dontHaveAccount')}{' '}
-            <Link href="/register" className="font-medium text-primary hover:text-nord-frost-3">
-              {t('auth.registerHere')}
-            </Link>
-          </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -91,7 +85,7 @@ export default function LoginPage() {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
+                className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                 placeholder={t('placeholders.enterEmail')}
               />
             </div>
@@ -107,7 +101,7 @@ export default function LoginPage() {
                 required
                 value={formData.password}
                 onChange={handleChange}
-                className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
+                className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                 placeholder={t('placeholders.enterPassword')}
               />
             </div>
@@ -123,6 +117,13 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
+
+        <p className="text-center text-sm text-muted-foreground">
+          {t('auth.dontHaveAccount')}{' '}
+          <Link href="/register" className="font-medium text-primary hover:text-nord-frost-3">
+            {t('auth.registerHere')}
+          </Link>
+        </p>
       </div>
     </div>
   )

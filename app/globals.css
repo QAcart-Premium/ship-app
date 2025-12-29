@@ -29,3 +29,35 @@
 body {
   @apply bg-background text-foreground;
 }
+
+/* Grid background for auth pages */
+.bg-grid {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(136, 192, 208, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(136, 192, 208, 0.05) 1px, transparent 1px);
+}
+
+/* Optional: Add a subtle radial gradient overlay for depth */
+.bg-grid-fade {
+  background:
+    radial-gradient(ellipse at center, transparent 0%, var(--background) 70%),
+    linear-gradient(to right, rgba(136, 192, 208, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(136, 192, 208, 0.08) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+/* Fix Chrome autofill background */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+select:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #3B4252 inset !important;
+  -webkit-text-fill-color: #D8DEE9 !important;
+  caret-color: #D8DEE9 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

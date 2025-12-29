@@ -8,8 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "setup": "prisma generate && prisma db push",
-    "reset": "rm -f prisma/dev.db && npm run setup"
+    "setup": "prisma generate && prisma db push && prisma db seed",
+    "seed": "prisma db seed",
+    "reset": "rm -f prisma/dev.db prisma/dev.db-shm prisma/dev.db-wal && npm run setup"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

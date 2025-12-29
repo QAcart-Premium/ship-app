@@ -31,7 +31,7 @@ export default function AdditionalOptionsCard({
     >
       <div className="flex items-center gap-2 mb-4">
         <Settings className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold text-foreground">{rules?.title || t('form.additionalOptions')}</h2>
+        <h2 className="text-xl font-semibold text-primary">{rules?.title || t('form.additionalOptions')}</h2>
       </div>
 
       {!rules ? (
@@ -41,7 +41,7 @@ export default function AdditionalOptionsCard({
       ) : (
         <div className="space-y-3">
         {signatureField && (
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <input
               type="checkbox"
               id="signatureRequired"
@@ -53,7 +53,7 @@ export default function AdditionalOptionsCard({
             />
             <label
               htmlFor="signatureRequired"
-              className={`ml-2 text-sm ${
+              className={`text-sm ${
                 signatureField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
@@ -62,7 +62,7 @@ export default function AdditionalOptionsCard({
           </div>
         )}
         {liquidField && (
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <input
               type="checkbox"
               id="containsLiquid"
@@ -74,7 +74,7 @@ export default function AdditionalOptionsCard({
             />
             <label
               htmlFor="containsLiquid"
-              className={`ml-2 text-sm ${
+              className={`text-sm ${
                 liquidField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
@@ -83,7 +83,7 @@ export default function AdditionalOptionsCard({
           </div>
         )}
         {insuranceField && (
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <input
               type="checkbox"
               id="insurance"
@@ -95,7 +95,7 @@ export default function AdditionalOptionsCard({
             />
             <label
               htmlFor="insurance"
-              className={`ml-2 text-sm ${
+              className={`text-sm ${
                 insuranceField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
@@ -104,7 +104,7 @@ export default function AdditionalOptionsCard({
           </div>
         )}
         {packagingField && (
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
             <input
               type="checkbox"
               id="packaging"
@@ -116,7 +116,7 @@ export default function AdditionalOptionsCard({
             />
             <label
               htmlFor="packaging"
-              className={`ml-2 text-sm ${
+              className={`text-sm ${
                 packagingField.disabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
               }`}
             >
@@ -126,7 +126,7 @@ export default function AdditionalOptionsCard({
         )}
         {pickupField && (
           <div className="pt-3 border-t border-border">
-            <label className="block text-sm font-medium text-muted-foreground mb-2">
+            <label className="block text-sm font-medium text-muted-foreground mb-3">
               {pickupField.label}
             </label>
             <div className="space-y-2">
@@ -134,7 +134,7 @@ export default function AdditionalOptionsCard({
                 const isDisabled =
                   disabled || !rules || pickupField.disabledValues?.includes(option.value)
                 return (
-                  <div key={option.value} className="flex items-center">
+                  <div key={option.value} className="flex items-center gap-3">
                     <input
                       type="radio"
                       id={`pickup-${option.value}`}
@@ -148,7 +148,7 @@ export default function AdditionalOptionsCard({
                     />
                     <label
                       htmlFor={`pickup-${option.value}`}
-                      className={`ml-2 text-sm ${
+                      className={`text-sm ${
                         isDisabled ? 'text-muted-foreground/50' : 'text-muted-foreground'
                       }`}
                     >

@@ -25,7 +25,7 @@ export default function ServiceSelectionCard({
     >
       <div className="flex items-center gap-2 mb-4">
         <Truck className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold text-foreground">{t('form.serviceSelection')}</h2>
+        <h2 className="text-xl font-semibold text-primary">{t('form.serviceSelection')}</h2>
       </div>
 
       {!serviceRules ? (
@@ -40,14 +40,14 @@ export default function ServiceSelectionCard({
               type="button"
               onClick={() => onServiceSelect(service)}
               disabled={disabled}
-              className={`w-full text-left p-4 border-2 rounded-lg transition-all ${
+              className={`w-full text-right p-4 border-2 rounded-lg transition-all ${
                 selectedService?.id === service.id
                   ? 'border-primary bg-nord-frost-1/20'
                   : 'border-border hover:border-primary/50'
               } ${disabled ? 'cursor-not-allowed' : ''}`}
               data-testid={`service-${service.id}`}
             >
-              <div className="flex justify-between items-start mb-1">
+              <div className="flex justify-between items-center mb-1" dir="rtl">
                 <span className="font-semibold text-foreground">
                   {service.name}
                 </span>
@@ -59,7 +59,7 @@ export default function ServiceSelectionCard({
                 {service.description}
               </p>
               <div className="text-xs text-muted-foreground/70">
-                {t('rate.base')}: ${service.basePrice} + ${service.pricePerKg}/كجم
+                {t('rate.base')}: {service.basePrice}$ + {service.pricePerKg}$/كجم
               </div>
             </button>
           ))}

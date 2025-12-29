@@ -40,7 +40,7 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-muted-foreground mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-3"
             >
               {field.label} {field.required && '*'}
             </label>
@@ -71,7 +71,7 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-muted-foreground mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-3"
             >
               {field.label} {field.required && '*'}
             </label>
@@ -106,7 +106,7 @@ export default function DynamicCard({
           <div key={fieldName}>
             <label
               htmlFor={fieldName}
-              className="block text-sm font-medium text-muted-foreground mb-1"
+              className="block text-sm font-medium text-muted-foreground mb-3"
             >
               {field.label} {field.required && '*'}
               {field.validation?.max && (
@@ -190,7 +190,7 @@ export default function DynamicCard({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           {getIcon()}
-          <h2 className="text-xl font-semibold text-foreground">{rules?.title || cardTitle || 'Loading...'}</h2>
+          <h2 className="text-xl font-semibold text-primary">{rules?.title || cardTitle || 'Loading...'}</h2>
         </div>
         {shipmentType && (
           <span className="text-xs bg-nord-frost-1/20 text-primary px-2 py-1 rounded">

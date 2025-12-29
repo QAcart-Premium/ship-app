@@ -23,7 +23,7 @@ export default function RateCard({
     >
       <div className="flex items-center gap-2 mb-4">
         <DollarSign className="w-5 h-5 text-primary" />
-        <h2 className="text-xl font-semibold text-foreground">{t('form.rate')}</h2>
+        <h2 className="text-xl font-semibold text-primary">{t('form.rate')}</h2>
       </div>
       <div className="space-y-4">
         <div className="flex justify-between items-center py-3 border-t border-b border-border">

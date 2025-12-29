@@ -157,7 +157,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto bg-background bg-grid-fade">
         <div className="p-8">
           {children}
         </div>

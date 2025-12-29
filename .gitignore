@@ -38,3 +38,7 @@ prisma/dev.db-journal
 
 .idea
 shipping-app.iml
+
+
+.claude
+lessons

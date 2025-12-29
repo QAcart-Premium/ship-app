@@ -98,12 +98,6 @@ export default function RegisterPage() {
           <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
             {t('auth.registerTitle')}
           </h2>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
-            {t('auth.alreadyHaveAccount')}{' '}
-            <Link href="/login" className="font-medium text-primary hover:text-nord-frost-3">
-              {t('auth.loginHere')}
-            </Link>
-          </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -114,8 +108,8 @@ export default function RegisterPage() {
           )}
 
           {/* Account Information */}
-          <div className="bg-muted p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">معلومات الحساب</h3>
+          <div className="bg-muted p-6 rounded-lg shadow border border-border">
+            <h3 className="text-lg font-semibold mb-4 text-primary">معلومات الحساب</h3>
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-muted-foreground">
@@ -128,7 +122,7 @@ export default function RegisterPage() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                   placeholder={t('placeholders.enterEmail')}
                 />
               </div>
@@ -145,7 +139,7 @@ export default function RegisterPage() {
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                     placeholder={t('placeholders.enterPassword')}
                   />
                 </div>
@@ -164,7 +158,7 @@ export default function RegisterPage() {
                     required
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                     placeholder="أعد إدخال كلمة المرور"
                   />
                 </div>
@@ -173,8 +167,8 @@ export default function RegisterPage() {
           </div>
 
           {/* Personal Information */}
-          <div className="bg-muted p-6 rounded-lg shadow">
-            <h3 className="text-lg font-semibold mb-4">المعلومات الشخصية</h3>
+          <div className="bg-muted p-6 rounded-lg shadow border border-border">
+            <h3 className="text-lg font-semibold mb-4 text-primary">المعلومات الشخصية</h3>
             <p className="text-sm text-muted-foreground mb-4">
               سيتم استخدام هذه المعلومات كبيانات المرسل الافتراضية
             </p>
@@ -190,7 +184,7 @@ export default function RegisterPage() {
                   required
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                   placeholder={t('placeholders.enterName')}
                 />
               </div>
@@ -207,7 +201,7 @@ export default function RegisterPage() {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                     placeholder={t('placeholders.enterPhone')}
                   />
                 </div>
@@ -222,19 +216,19 @@ export default function RegisterPage() {
                     required
                     value={formData.country}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                   >
                     <option value="">{t('placeholders.selectCountry')}</option>
-                    <option value="Saudi Arabia">Saudi Arabia</option>
-                    <option value="United Arab Emirates">United Arab Emirates</option>
-                    <option value="Kuwait">Kuwait</option>
-                    <option value="Bahrain">Bahrain</option>
-                    <option value="Oman">Oman</option>
-                    <option value="Qatar">Qatar</option>
-                    <option value="Jordan">Jordan</option>
-                    <option value="Lebanon">Lebanon</option>
-                    <option value="Egypt">Egypt</option>
-                    <option value="Iraq">Iraq</option>
+                    <option value="المملكة العربية السعودية">المملكة العربية السعودية</option>
+                    <option value="الإمارات العربية المتحدة">الإمارات العربية المتحدة</option>
+                    <option value="الكويت">الكويت</option>
+                    <option value="البحرين">البحرين</option>
+                    <option value="قطر">قطر</option>
+                    <option value="عُمان">عُمان</option>
+                    <option value="مصر">مصر</option>
+                    <option value="الأردن">الأردن</option>
+                    <option value="لبنان">لبنان</option>
+                    <option value="العراق">العراق</option>
                   </select>
                 </div>
               </div>
@@ -251,7 +245,7 @@ export default function RegisterPage() {
                     required
                     value={formData.city}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                     placeholder={t('placeholders.enterCity')}
                   />
                 </div>
@@ -267,7 +261,7 @@ export default function RegisterPage() {
                     required
                     value={formData.postalCode}
                     onChange={handleChange}
-                    className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                     placeholder={t('placeholders.enterPostalCode')}
                   />
                 </div>
@@ -284,7 +278,7 @@ export default function RegisterPage() {
                   required
                   value={formData.street}
                   onChange={handleChange}
-                  className="mt-1 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="mt-3 w-full px-3 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary bg-nord-polar-2 text-foreground"
                   placeholder={t('placeholders.enterStreet')}
                 />
               </div>
@@ -301,6 +295,13 @@ export default function RegisterPage() {
             </button>
           </div>
         </form>
+
+        <p className="text-center text-sm text-muted-foreground">
+          {t('auth.alreadyHaveAccount')}{' '}
+          <Link href="/login" className="font-medium text-primary hover:text-nord-frost-3">
+            {t('auth.loginHere')}
+          </Link>
+        </p>
       </div>
     </div>
   )

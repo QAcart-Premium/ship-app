@@ -15,10 +15,10 @@ function HomePageContent() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2" data-testid="page-title">
+        <h1 className="text-3xl font-bold text-foreground mb-2" data-testid="page-title">
           {isEditMode ? 'تعديل الشحنة' : isRepeatMode ? 'تكرار الشحنة' : 'إنشاء شحنة جديدة'}
         </h1>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           {isEditMode
             ? 'قم بتحديث تفاصيل الشحنة أدناه'
             : isRepeatMode
@@ -36,7 +36,7 @@ export default function HomePage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-gray-500">{t('common.loading')}</div>
+          <div className="text-muted-foreground">{t('common.loading')}</div>
         </div>
       }
     >

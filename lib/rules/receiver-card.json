@@ -10,8 +10,7 @@
       "validation": {
         "required": true,
         "minLength": 2,
-        "pattern": "^[a-zA-Z\\s'-]+$",
-        "errorMessage": "يجب أن يكون الاسم على الأقل حرفين بدون أحرف خاصة"
+        "errorMessage": "يجب أن يكون الاسم على الأقل حرفين"
       },
       "placeholder": "أدخل الاسم الكامل للمستلم"
     },

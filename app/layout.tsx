@@ -23,7 +23,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" className={readexPro.variable}>
-      <body className={readexPro.className}>
+      <body className={`${readexPro.className} bg-grid-fade`}>
         <AuthProvider>
           <AuthenticatedLayout>{children}</AuthenticatedLayout>
         </AuthProvider>

@@ -13,19 +13,19 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!email || !password || !fullName || !phone || !country || !city || !street || !postalCode) {
-      return NextResponse.json({ error: 'All fields are required' }, { status: 400 })
+      return NextResponse.json({ error: 'جميع الحقول مطلوبة' }, { status: 400 })
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 })
+      return NextResponse.json({ error: 'صيغة البريد الإلكتروني غير صالحة' }, { status: 400 })
     }
 
     // Validate password strength (minimum 6 characters)
     if (password.length < 6) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
+        { error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' },
         { status: 400 }
       )
     }
@@ -51,22 +51,22 @@ export async function POST(request: NextRequest) {
       const validation = fieldRule.validation as any
 
       if (validation?.required && (!value || value.trim() === '')) {
-        validationErrors.push(validation.errorMessage || `${fieldRule.label} is required`)
+        validationErrors.push(validation.errorMessage || `${fieldRule.label} مطلوب`)
         continue
       }
 
       if (value && validation?.minLength && value.length < validation.minLength) {
-        validationErrors.push(validation.errorMessage || `${fieldRule.label} must be at least ${validation.minLength} characters`)
+        validationErrors.push(validation.errorMessage || `${fieldRule.label} يجب أن يكون ${validation.minLength} أحرف على الأقل`)
       }
 
       if (value && validation?.maxLength && value.length > validation.maxLength) {
-        validationErrors.push(`${fieldRule.label} must be at most ${validation.maxLength} characters`)
+        validationErrors.push(`${fieldRule.label} يجب أن يكون ${validation.maxLength} حرف كحد أقصى`)
       }
 
       if (value && validation?.pattern) {
         const regex = new RegExp(validation.pattern)
         if (!regex.test(value)) {
-          validationErrors.push(validation.errorMessage || `${fieldRule.label} is invalid`)
+          validationErrors.push(validation.errorMessage || `${fieldRule.label} غير صالح`)
         }
       }
     }
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const existingUser = await userRepository.findByEmail(email.toLowerCase())
 
     if (existingUser) {
-      return NextResponse.json({ error: 'Email already registered' }, { status: 409 })
+      return NextResponse.json({ error: 'البريد الإلكتروني مسجل مسبقاً' }, { status: 409 })
     }
 
     // Hash password
@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
     // Return success with user data
     const response = NextResponse.json(
       {
-        message: 'Registration successful',
+        message: 'تم التسجيل بنجاح',
         user,
       },
       { status: 201 }
@@ -119,6 +119,6 @@ export async function POST(request: NextRequest) {
     return response
   } catch (error) {
     console.error('Registration error:', error)
-    return NextResponse.json({ error: 'Failed to register user' }, { status: 500 })
+    return NextResponse.json({ error: 'فشل في تسجيل المستخدم' }, { status: 500 })
   }
 }

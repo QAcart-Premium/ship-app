@@ -61,3 +61,14 @@ select:-webkit-autofill:active {
   caret-color: #D8DEE9 !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

@@ -85,7 +85,7 @@ This document contains every business logic rule extracted from the shipping app
 * When sender and receiver are the same country: Domestic shipment
 * When both sender and receiver are Gulf countries: IntraGulf shipment
 * When sender is Gulf and receiver is non-Gulf: International shipment
-* When sender is non-Gulf and receiver is Gulf: IntraGulf shipment
+* When sender is non-Gulf and receiver is Gulf: International shipment
 * When both sender and receiver are non-Gulf: International shipment
 
 ---

@@ -18,45 +18,91 @@ async function main() {
   await prisma.shipment.deleteMany()
   await prisma.user.deleteMany()
 
-  // Create test user with generic Arabic name
   const hashedPassword = await bcrypt.hash('Test@1234', SALT_ROUNDS)
 
-  const user = await prisma.user.create({
-    data: {
-      email: 'user@example.com',
+  // Create users for each country
+  const usersData = [
+    {
+      email: 'jor@qacart.com',
       password: hashedPassword,
-      fullName: 'أحمد المصري',
+      fullName: 'أحمد الأردني',
       phone: '0791234567',
       country: 'الأردن',
       city: 'عمّان',
-      street: 'شارع الرينبو',
+      street: 'شارع الملك عبدالله الثاني',
       postalCode: '11110',
     },
-  })
+    {
+      email: 'ksa@qacart.com',
+      password: hashedPassword,
+      fullName: 'خالد السعودي',
+      phone: '0551234567',
+      country: 'المملكة العربية السعودية',
+      city: 'الرياض',
+      street: 'شارع الملك فهد',
+      postalCode: '12211',
+    },
+    {
+      email: 'uae@qacart.com',
+      password: hashedPassword,
+      fullName: 'محمد الإماراتي',
+      phone: '0501234567',
+      country: 'الإمارات العربية المتحدة',
+      city: 'دبي',
+      street: 'شارع الشيخ زايد',
+      postalCode: '00000',
+    },
+    {
+      email: 'kwt@qacart.com',
+      password: hashedPassword,
+      fullName: 'فهد الكويتي',
+      phone: '96512345678',
+      country: 'الكويت',
+      city: 'مدينة الكويت',
+      street: 'شارع الخليج العربي',
+      postalCode: '15000',
+    },
+    {
+      email: 'egy@qacart.com',
+      password: hashedPassword,
+      fullName: 'عمر المصري',
+      phone: '01012345678',
+      country: 'مصر',
+      city: 'القاهرة',
+      street: 'شارع التحرير',
+      postalCode: '11511',
+    },
+  ]
 
-  console.log('Created test user:', {
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-  })
+  const users: Record<string, { id: string; email: string; fullName: string }> = {}
+
+  for (const userData of usersData) {
+    const user = await prisma.user.create({ data: userData })
+    // Use country code as key (jor, ksa, uae, kwt, egy)
+    const countryCode = userData.email.split('@')[0]
+    users[countryCode] = { id: user.id, email: user.email, fullName: user.fullName }
+    console.log(`Created user: ${user.email} (${user.fullName})`)
+  }
+
+  const jorUser = users['jor']
 
   // Create sample shipments with various types and statuses
   const shipments = [
-    // Domestic shipments (same country)
+    // Domestic shipment (KSA)
     {
       trackingNumber: generateTrackingNumber(),
-      userId: user.id,
-      senderName: 'أحمد المصري',
-      senderPhone: '0791234567',
+      userId: users['ksa'].id,
+      senderName: 'خالد السعودي',
+      senderPhone: '0551234567',
       senderCountry: 'المملكة العربية السعودية',
       senderCity: 'الرياض',
-      senderStreet: 'طريق الملك فهد',
+      senderStreet: 'شارع الملك فهد',
       senderPostalCode: '12211',
-      receiverName: 'خالد العتيبي',
-      receiverPhone: '0551234567',
+      receiverName: 'سلطان العتيبي',
+      receiverPhone: '0559876543',
       receiverCountry: 'المملكة العربية السعودية',
       receiverCity: 'جدة',
-      receiverStreet: 'شارع فلسطين',
+      receiverStreet: 'شارع الأمير سلطان',
       receiverPostalCode: '21442',
       weight: 5.0,
       length: 30,
@@ -79,21 +125,21 @@ async function main() {
       isDraft: false,
       status: 'finalized',
     },
-    // IntraGulf shipment
+    // IntraGulf shipment (Kuwait to UAE)
     {
       trackingNumber: generateTrackingNumber(),
-      userId: user.id,
-      senderName: 'أحمد المصري',
-      senderPhone: '0791234567',
+      userId: users['kwt'].id,
+      senderName: 'فهد الكويتي',
+      senderPhone: '96512345678',
       senderCountry: 'الكويت',
       senderCity: 'مدينة الكويت',
-      senderStreet: 'طريق الخليج',
+      senderStreet: 'شارع الخليج العربي',
       senderPostalCode: '15000',
-      receiverName: 'فاطمة الكويتية',
-      receiverPhone: '97165123456',
+      receiverName: 'سعيد الإماراتي',
+      receiverPhone: '0509876543',
       receiverCountry: 'الإمارات العربية المتحدة',
       receiverCity: 'دبي',
-      receiverStreet: 'شارع الشيخ زايد',
+      receiverStreet: 'شارع الشيخ محمد بن راشد',
       receiverPostalCode: '00000',
       weight: 10.0,
       length: 40,
@@ -116,21 +162,21 @@ async function main() {
       isDraft: false,
       status: 'finalized',
     },
-    // International shipment
+    // International shipment (Jordan to Egypt)
     {
       trackingNumber: generateTrackingNumber(),
-      userId: user.id,
-      senderName: 'أحمد المصري',
+      userId: users['jor'].id,
+      senderName: 'أحمد الأردني',
       senderPhone: '0791234567',
       senderCountry: 'الأردن',
       senderCity: 'عمّان',
-      senderStreet: 'شارع الرينبو',
+      senderStreet: 'شارع الملك عبدالله الثاني',
       senderPostalCode: '11110',
       receiverName: 'محمد القاهري',
       receiverPhone: '01012345678',
       receiverCountry: 'مصر',
       receiverCity: 'القاهرة',
-      receiverStreet: 'ميدان التحرير',
+      receiverStreet: 'شارع الهرم',
       receiverPostalCode: '11511',
       weight: 15.0,
       length: 50,
@@ -140,7 +186,7 @@ async function main() {
       shipmentType: 'International',
       serviceType: 'international_standard',
       pickupMethod: 'home',
-      signatureRequired: true, // Required for Egypt
+      signatureRequired: true,
       containsLiquid: false,
       insurance: true,
       packaging: true,
@@ -153,21 +199,21 @@ async function main() {
       isDraft: false,
       status: 'finalized',
     },
-    // Draft shipment (incomplete)
+    // Draft shipment (Jordan domestic)
     {
       trackingNumber: generateTrackingNumber(),
-      userId: user.id,
-      senderName: 'أحمد المصري',
+      userId: users['jor'].id,
+      senderName: 'أحمد الأردني',
       senderPhone: '0791234567',
       senderCountry: 'الأردن',
       senderCity: 'عمّان',
-      senderStreet: 'شارع الرينبو',
+      senderStreet: 'شارع الملك عبدالله الثاني',
       senderPostalCode: '11110',
       receiverName: 'سارة الأردنية',
       receiverPhone: '0799876543',
       receiverCountry: 'الأردن',
       receiverCity: 'إربد',
-      receiverStreet: 'شارع الجامعة',
+      receiverStreet: 'شارع الحصن',
       receiverPostalCode: '21110',
       weight: 3.0,
       length: 20,
@@ -177,7 +223,7 @@ async function main() {
       shipmentType: 'Domestic',
       serviceType: 'domestic_express',
       pickupMethod: 'home',
-      signatureRequired: true, // Required for Jordan
+      signatureRequired: true,
       containsLiquid: false,
       insurance: false,
       packaging: false,
@@ -190,17 +236,17 @@ async function main() {
       isDraft: true,
       status: 'draft',
     },
-    // Another international - economy
+    // International shipment (Egypt to KSA)
     {
       trackingNumber: generateTrackingNumber(),
-      userId: user.id,
-      senderName: 'أحمد المصري',
-      senderPhone: '0791234567',
+      userId: users['egy'].id,
+      senderName: 'عمر المصري',
+      senderPhone: '01012345678',
       senderCountry: 'مصر',
       senderCity: 'الإسكندرية',
-      senderStreet: 'طريق الكورنيش',
+      senderStreet: 'شارع أبو قير',
       senderPostalCode: '21500',
-      receiverName: 'عمر السعودي',
+      receiverName: 'ناصر السعودي',
       receiverPhone: '0561234567',
       receiverCountry: 'المملكة العربية السعودية',
       receiverCity: 'الدمام',
@@ -227,6 +273,43 @@ async function main() {
       isDraft: false,
       status: 'finalized',
     },
+    // UAE shipment
+    {
+      trackingNumber: generateTrackingNumber(),
+      userId: users['uae'].id,
+      senderName: 'محمد الإماراتي',
+      senderPhone: '0501234567',
+      senderCountry: 'الإمارات العربية المتحدة',
+      senderCity: 'دبي',
+      senderStreet: 'شارع الشيخ زايد',
+      senderPostalCode: '00000',
+      receiverName: 'علي الكويتي',
+      receiverPhone: '96598765432',
+      receiverCountry: 'الكويت',
+      receiverCity: 'حولي',
+      receiverStreet: 'شارع تونس',
+      receiverPostalCode: '32001',
+      weight: 8.0,
+      length: 35,
+      width: 25,
+      height: 20,
+      contentDescription: 'هدايا',
+      shipmentType: 'IntraGulf',
+      serviceType: 'gulf_express',
+      pickupMethod: 'home',
+      signatureRequired: true,
+      containsLiquid: false,
+      insurance: true,
+      packaging: true,
+      price: 95.00,
+      baseCost: 60.00,
+      insuranceCost: 15.00,
+      signatureCost: 5.00,
+      packagingCost: 8.00,
+      totalCost: 95.00,
+      isDraft: false,
+      status: 'finalized',
+    },
   ]
 
   for (const shipment of shipments) {
@@ -237,9 +320,11 @@ async function main() {
 
   console.log('')
   console.log('=====================================')
-  console.log('Test Credentials:')
-  console.log('Email: user@example.com')
-  console.log('Password: Test@1234')
+  console.log('Test Users (Password: Test@1234)')
+  console.log('=====================================')
+  for (const userData of usersData) {
+    console.log(`  ${userData.email} - ${userData.fullName} (${userData.country})`)
+  }
   console.log('=====================================')
   console.log('')
   console.log('Seeding completed!')
